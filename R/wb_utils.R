@@ -1,7 +1,7 @@
 #' @importFrom stats as.formula terms
 #' @import stringr
 
-wb_formula_parser <- function(formula, dv, data) {
+wb_formula_parser <- function(formula, dv, data, force.constants = TRUE) {
   # See how many parts the formula has 
   conds <- length(formula)[2]
   
@@ -68,11 +68,6 @@ wb_formula_parser <- function(formula, dv, data) {
                                 yes = "||", no = "|"),  
                rhs, ")")
       })
-      ranef_forms <- paste(ranef_forms, collapse = " + ")
-      new_3 <- 
-        paste("~", to_char(get_rhs(formula, which = 3)), "+", ranef_forms)
-      attr(formula, "rhs")[[3]] <- as.formula(new_3)[[2]]
-      # if (!is.null(ranefs)) ranefs <- paste0("(", ranefs, ")")
     }
   }
   
@@ -94,13 +89,15 @@ wb_formula_parser <- function(formula, dv, data) {
   }
   
   # Try to check for non-varying variables in varying part of formula
-  for (var in varying %just% names(data)) {
-    if (!(are_varying(data, !! sym(var)))) {
-      varying <- varying %not% var
-      constants <- c(constants, var)
-      msg_wrap(var, " was included in the time-varying part of the formula 
-               but does not vary over time. It is being treated as a constant
-               instead.")
+  if (force.constants == TRUE) {
+    for (var in varying %just% names(data)) {
+      if (!(are_varying(data, !! sym(var)))) {
+        varying <- varying %not% var
+        constants <- c(constants, var)
+        msg_wrap(var, " was included in the time-varying part of the formula 
+                 but does not vary over time. It is being treated as a constant
+                 instead.")
+      }
     }
   }
   
@@ -123,6 +120,13 @@ wb_formula_parser <- function(formula, dv, data) {
     
     # Add them onto the allvars vector as long as they aren't redundant
     allvars <- unique(c(allvars, int_vars))
+  }
+  
+  if (!is.null(ranefs)) {
+    ranef_forms <- paste(ranef_forms, collapse = " + ")
+    new_3 <- 
+      paste("~", to_char(get_rhs(formula, which = 3)), "+", ranef_forms)
+    attr(formula, "rhs")[[3]] <- as.formula(new_3)[[2]]
   }
   
   # Now I want to expand all interactions into their constituent terms in 
@@ -688,7 +692,7 @@ expand_interactions <- function(x) {
   }
   
   for (i in seq_along(attr(x, "rhs"))) {
-    if (to_char(get_rhs(x, i, TRUE)) != "~ 1") {
+    if (to_char(get_rhs(x, i, TRUE)) %nin% c("~ 1", "~1")) {
       attr(x, "rhs")[[i]] <- 
         reformulate(unique(attr(terms(get_rhs(x, i, TRUE), keep.order = TRUE),
                                 "term.labels")))[[2]]

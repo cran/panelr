@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jacob A. Long" />
 
-<meta name="date" content="2019-05-13" />
+<meta name="date" content="2019-07-12" />
 
 <title>Introduction to the panelr package</title>
 
@@ -69,8 +69,6 @@ overflow: auto;
 margin-left: 2%;
 position: fixed;
 border: 1px solid #ccc;
-webkit-border-radius: 6px;
-moz-border-radius: 6px;
 border-radius: 6px;
 }
 
@@ -98,9 +96,14 @@ font-size: 12px;
 .tocify-subheader .tocify-subheader {
 text-indent: 30px;
 }
-
 .tocify-subheader .tocify-subheader .tocify-subheader {
 text-indent: 40px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 50px;
+}
+.tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader .tocify-subheader {
+text-indent: 60px;
 }
 
 .tocify .tocify-item > a, .tocify .nav-list .nav-header {
@@ -504,13 +507,13 @@ float: none;
 
           item.append($("<a/>", {
 
-            "text": self.text()
+            "html": self.html()
 
           }));
 
         } else {
 
-          item.text(self.text());
+          item.html(self.html());
 
         }
 
@@ -1505,8 +1508,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -1544,7 +1545,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">Introduction to the <code>panelr</code> package</h1>
 <h4 class="author">Jacob A. Long</h4>
-<h4 class="date">2019-05-13</h4>
+<h4 class="date">2019-07-12</h4>
 
 </div>
 
@@ -1664,13 +1665,13 @@ xw_{it} = (x_{it} - \bar{x_{i}}) \times (w_{it} - \bar{w_i})
 \]</span></p>
 <p>Instead, the conventional wisdom goes, you should first take the product of the observed variables and subtract the individual-level mean of that product, like so:</p>
 <p><span class="math display">\[
-xw_{it} = x_{it}w_{it} - \bar{xw}_i
+xw_{it} = x_{it}w_{it} - \overline{xw}_i
 \]</span></p>
-<p>Where <span class="math inline">\(\bar{xw}_i\)</span> can also be expressed as <span class="math inline">\(\frac{\sum_{t=1}^{T_i}{x_{it}w_{it}}}{T_i}\)</span>, the sum of all products for each <span class="math inline">\(i\)</span> divided by the number of time points for each <span class="math inline">\(i\)</span>, <span class="math inline">\(T_i\)</span>.</p>
+<p>Where <span class="math inline">\(\overline{xw}_i\)</span> can also be expressed as <span class="math inline">\(\frac{\sum_{t=1}^{T_i}{x_{it}w_{it}}}{T_i}\)</span>, the sum of all products for each <span class="math inline">\(i\)</span> divided by the number of time points for each <span class="math inline">\(i\)</span>, <span class="math inline">\(T_i\)</span>.</p>
 <p><a href="https://ideas.repec.org/p/diw/diwwpp/dp1748.html">Giesselmann and Schmidt-Catran (2018)</a> show that this conventional method for generating <span class="math inline">\(xw_{it}\)</span> does not have the unbiasedness that the individual terms do. I’ll leave it to them to explain why exactly this is, but the solution is to start with the first, wrong version of <span class="math inline">\(xw_{it}\)</span>, which I’ll call <span class="math inline">\(xw_{it}^*\)</span>, and subtract <em>its</em> mean too:</p>
 <p><span class="math display">\[
 xw_{it}^* = (x_{it} - \bar{x_{i}}) \times (w_{it} - \bar{w_i}) \\
-xw_{it} = xw_{it}^* - \bar{xw_i^*}
+xw_{it} = xw_{it}^* - \overline{xw_i^*}
 \]</span></p>
 <p>I call this the “double-demeaning” approach to interactions, in contrast to the one-time demeaning in the conventional approach. By default, <code>wbm()</code> calculates interactions via the double-demeaning method. You can change this via the <code>interaction.style</code> argument if you need your results to match other software.</p>
 </div>
@@ -2031,8 +2032,12 @@ y_{it} - y_{it-1} = (\mu_t - \mu_{t-1}) + \beta^+x_{it}^+ + \beta^-x_{it}^- +
 (\epsilon_{it} - \epsilon_{it-1})
 \]</span></p>
 <p>Where</p>
-<p>$$ x_{it}^+ = x_{it} - x_{it -1}  (x_{it} - x_{it -1}) &gt; 0,  0 \ x_{it}^- = -(x_{it} - x_{it -1})  (x_{it} - x_{it -1}) &lt; 0,  0</p>
-<p>$$</p>
+<p><span class="math display">\[
+x_{it}^+ = x_{it} - x_{it -1} \text{ if } (x_{it} - x_{it -1}) &gt; 0,
+\text{otherwise } 0 \\
+x_{it}^- = -(x_{it} - x_{it -1}) \text{ if } (x_{it} - x_{it -1}) &lt; 0,
+\text{otherwise } 0
+\]</span></p>
 <p>In other words, if the difference is positive, it becomes part of the <span class="math inline">\(x_{it}^+\)</span> and if it is negative, it is multiplied by -1 to be made positive and is made part of the <span class="math inline">\(x_{it}^-\)</span> variable. If the effects are symmetric, <span class="math inline">\(\beta^+ = -\beta^-\)</span>.</p>
 <p>After fitting the model via GLS, we can then do a test of the contrasts of the <span class="math inline">\(\beta^+\)</span> and <span class="math inline">\(\beta^-\)</span> coefficients as a formal way to assess the presence of asymmetric effects.</p>
 <p>Here’s how it works with the <code>panelr</code> function, <code>asym()</code>.</p>

@@ -51,10 +51,30 @@ summary.panel_data <- function(object, ..., by.wave = TRUE, by.id = FALSE) {
     when(by.wave == TRUE ~ group_by(., !! sym(wave)),
          by.wave == FALSE ~ select(., - !! sym(wave))) %>%
     # Call skim
-    (skimr::skim)
+    skimr::skim() -> out
+  
+  class(out) <- c("summary.panel_data", class(out))
+  out
   
 }
 
+#' @export
+print.summary.panel_data <- function(x, ...) {
+  class(x) <- class(x) %not% "summary.panel_data"
+  print(x, include_summary = FALSE)
+}
+
+#' @rawNamespace 
+#' if (getRversion() >= "3.6.0") {
+#'   S3method(knitr::knit_print, summary.panel_data)
+#' } else {
+#'   export(knit_print.summary.panel_data)
+#' }
+knit_print.summary.panel_data <- function(x, ...) {
+  class(x) <- class(x) %not% "summary.panel_data"
+  knitr::knit_print(x, options = list(skimr_include_summary = FALSE))
+}
+ 
 ## WIP describe within and between variance
 #' @importFrom stats weighted.mean
 describe <- function(.data, ...) {
@@ -210,7 +230,7 @@ as_panel_data.pdata.frame <- function(data, ...) {
   if (wave %nin% names(data)) {
     x[wave] <- indices[wave]
   }
-  panel_data(data, id = !! id, wave = !! wave, ...)
+  panel_data(data, id = !! sym(id), wave = !! sym(wave), ...)
 }
 
 #' @rdname panel_data

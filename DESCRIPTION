@@ -1,7 +1,7 @@
 Package: panelr
 Title: Regression Models and Utilities for Repeated Measures and Panel
         Data
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: person("Jacob A.", "Long", email = "long.1377@osu.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1582-6214"))
 Description: Provides an object type and associated tools for storing and 
   wrangling panel data. Implements several methods for creating regression
@@ -31,8 +31,8 @@ LazyData: true
 RoxygenNote: 6.1.1.9000
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-05-13 14:41:45 UTC; jlong
+Packaged: 2019-07-12 16:49:35 UTC; jlong
 Author: Jacob A. Long [aut, cre] (<https://orcid.org/0000-0002-1582-6214>)
 Maintainer: Jacob A. Long <long.1377@osu.edu>
 Repository: CRAN
-Date/Publication: 2019-05-16 11:10:07 UTC
+Date/Publication: 2019-07-12 17:30:03 UTC

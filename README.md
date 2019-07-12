@@ -1,6 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version-ago/panelr)](https://cran.r-project.org/package=panelr)
+[![Total
+Downloads](https://cranlogs.r-pkg.org/badges/grand-total/panelr)](https://cran.r-project.org/package=panelr)
 [![Travis-CI Build
 Status](https://travis-ci.org/jacob-long/panelr.svg?branch=master)](https://travis-ci.org/jacob-long/panelr)
 [![AppVeyor Build
@@ -31,12 +34,10 @@ supports estimation via GLS for linear asymmetric effects models
 
 ## Installation
 
-At the moment, `panelr` is only available through Github. A submission
-to CRAN is coming soon.
+`panelr` is now available via CRAN.
 
 ``` r
-install.packages("devtools")
-devtools::install_github("jacob-long/panelr")
+install.packages("panelr")
 ```
 
 ## Usage
@@ -96,31 +97,15 @@ columns is the ID column and which is the wave column. It will also
 fight you a bit when you do things that might have the side effect of
 dropping those columns or putting them out of time order. `panel_data`
 frames are modified tibbles ([`tibble`
-package](http://tibble.tidyverse.org/)) that are grouped by entity
+package](https://tibble.tidyverse.org/)) that are grouped by entity
 (i.e., the ID column).
 
 `panel_data` frames are meant to play nice with the
-[`tidyverse`](tidyverse.org). Here’s a quick sample of how a tidy
-workflow with `panelr` can work:
+[`tidyverse`](https://tidyverse.org). Here’s a quick sample of how a
+tidy workflow with `panelr` can work:
 
 ``` r
 library(dplyr)
-```
-
-``` 
-
-Attaching package: 'dplyr'
-```
-
-    The following objects are masked from 'package:stats':
-    
-        filter, lag
-
-    The following objects are masked from 'package:base':
-    
-        intersect, setdiff, setequal, union
-
-``` r
 data("WageData")
 # Create `panel_data` object
 wages <- panel_data(WageData, id = id, wave = t) %>%
@@ -271,8 +256,8 @@ the Github issues system over trying to reach out to me in other ways.
 Pull requests for contributions are encouraged.
 
 Please note that this project is released with a [Contributor Code of
-Conduct](CONDUCT.md). By participating in this project you agree to
-abide by its terms.
+Conduct](https://github.com/jacob-long/panelr/blob/master/CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ## License
 

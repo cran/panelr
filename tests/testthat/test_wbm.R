@@ -206,10 +206,22 @@ test_that("wbm summary works", {
 # Custom random effects ---------------------------------------------------
 context("Custom random effects")
 
-wb <- wbm(wks ~ union + lag(lwage) | blk | (union | id),
-          data = wages, pvals = TRUE)
+wb <- wbm(wks ~ union + lag(lwage) | blk | (union | id), data = wages)
 
 test_that("wbm works", {
+  expect_s4_class(wb, "wbm")
+})
+test_that("wbm summary works", {
+  expect_s3_class(swb <- summary(wb), "summary.wbm")
+  expect_output(print(swb))
+})
+
+# Multiple random effects
+test_that("wbm works with multiple random effects", {
+  suppressWarnings({
+    wb <- wbm(wks ~ union + lag(lwage) | blk | (union | id) + (lag(lwage) | id),
+            data = wages)
+  })
   expect_s4_class(wb, "wbm")
 })
 test_that("wbm summary works", {
@@ -318,3 +330,65 @@ test_that("wbm_stan works w/ balance correction", {
   expect_s3_class(model$stan_code, "brmsmodel")
 })
 
+# predictions -----------------------------------------------------------------
+context("wbm predictions")
+model <- wbm(lwage ~ lag(union) + wks, data = wages)
+test_that("wbm predictions work w/o newdata", {
+  expect_is(predict(model), "numeric")
+})
+
+test_that("wbm predictions work w/ non-raw newdata", {
+  # non-panel_data input
+  expect_is(predict(model, newdata = data.frame(
+    union = 1:4,
+    wks = 40,
+    lwage = 50,
+    id = 1,
+    t = 5
+  )), "numeric")
+  # without random effects
+  expect_is(predict(model, newdata = data.frame(
+    union = 1:4,
+    wks = 40,
+    lwage = 50,
+    id = 1,
+    t = 5
+  ), re.form = ~0), "numeric")
+  # panel_data input
+  expect_is(predict(model, newdata = panel_data(data.frame(
+    union = 1:4,
+    wks = 40,
+    lwage = 50,
+    id = 1,
+    t = 5
+  ), id = id, wave = t, strict = FALSE)), "numeric")
+  # without random effects
+  expect_is(predict(model, newdata = panel_data(data.frame(
+    union = 1:4,
+    wks = 40,
+    lwage = 50,
+    id = 1,
+    t = 5
+  ), id = id, wave = t, strict = FALSE), re.form = ~0), "numeric")
+})
+
+test_that("wbm predictions work w/ raw newdata", {
+  expect_is(predict(model, newdata = data.frame(
+    `lag(union)` = -2:2,
+    wks = 0,
+    `imean(wks)` = 40,
+    `imean(lag(union))` = 2,
+    lwage = 50,
+    id = 1,
+    t = 5, check.names = FALSE
+  ), raw = TRUE), "numeric")
+  expect_is(predict(model, newdata = data.frame(
+    `lag(union)` = -2:2,
+    wks = 0,
+    `imean(wks)` = 40,
+    `imean(lag(union))` = 2,
+    lwage = 50,
+    id = 1,
+    t = 5, check.names = FALSE
+  ), raw = TRUE, re.form = ~0), "numeric")
+})

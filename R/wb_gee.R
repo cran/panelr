@@ -7,6 +7,9 @@
 #' @param cor.str Any correlation structure accepted by [geepack::geeglm()].
 #'  Default is "ar1", most useful alternative is "exchangeable". "unstructured"
 #'  may cause problems due to its computational complexity.
+#'  
+#' @param calc.fit.stats Calculate fit statistics? Default is TRUE, but 
+#'  occasionally poor-fitting models might trip up here.
 #' 
 #' @param ... Additional arguments provided to [geepack::geeglm()].
 #'
@@ -71,7 +74,8 @@ wbgee <- function(formula, data, id = NULL, wave = NULL,
                 balance.correction = FALSE, dt.random = TRUE, dt.order = 1,
                 weights = NULL, offset = NULL, 
                 interaction.style = c("double-demean", "demean", "raw"),
-                scale = FALSE, scale.response = FALSE, n.sd = 1, ...) {
+                scale = FALSE, scale.response = FALSE, n.sd = 1,
+                calc.fit.stats = TRUE, ...) {
   
   if (!requireNamespace("geepack")) need_package("geepack")
   
@@ -183,7 +187,11 @@ wbgee <- function(formula, data, id = NULL, wave = NULL,
   attr(fit$frame, "terms") <- terms 
   attr(fit$frame, "formula") <- formula(fit)  
   
-  qics <- qic(fit)
+  if (calc.fit.stats == TRUE) {
+    qics <- qic(fit)
+  } else {
+    qics <- list(QIC = NA, QICu = NA, CIC = NA)
+  }
   
   fit$call_info <- list(dv = dv, id = id, wave = wave,
                         num_distinct = prepped$num_distinct,
@@ -198,7 +206,8 @@ wbgee <- function(formula, data, id = NULL, wave = NULL,
                         balance_correction = balance.correction, pf = pf,
                         qic = qics["QIC"], qicu = qics["QICu"],
                         cic = qics["CIC"], cor.str = cor.str[1],
-                        alpha = fit_sum$corr)
+                        alpha = fit_sum$corr, 
+                        interaction.style = interaction.style)
   
   fit$call <- the_call
   class(fit) <- c("wbgee", class(fit))
