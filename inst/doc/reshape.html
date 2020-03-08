@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <meta name="author" content="Jacob A. Long" />
 
-<meta name="date" content="2019-07-12" />
+<meta name="date" content="2020-03-08" />
 
 <title>Reshaping panel data with long_panel() and widen_panel()</title>
 
@@ -96,7 +96,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -117,9 +117,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -288,7 +285,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -303,7 +301,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Reshaping panel data with <code>long_panel()</code> and <code>widen_panel()</code></h1>
 <h4 class="author">Jacob A. Long</h4>
-<h4 class="date">2019-07-12</h4>
+<h4 class="date">2020-03-08</h4>
 
 
 
@@ -378,6 +376,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 <p><strong>Wide</strong> data, on the other hand, have only one row per entity and a separate column for each measure and time point. The same data above in wide format look like this:</p>
+<pre><code>Warning: package &#39;Matrix&#39; was built under R version 3.6.2</code></pre>
 <div class="kable-table">
 <table>
 <thead>
@@ -483,7 +482,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 <p>Here we can see that the time indicators are at the <em>end</em> of the variable names (<code>_W1</code>), time indicators of 1, 2, and 3, and a <em>prefix</em> of <code>_W</code>. With that in mind, we can use <code>long_panel()</code> to convert the data to long format.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -557,8 +556,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div id="comparing-with-base-r" class="section level3">
 <h3>Comparing with base R</h3>
 <p>I should note that base R has a function, <code>reshape()</code> that can work in this situation without making you pull your hair out too much:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">reshape</span>(<span class="kw">as.data.frame</span>(wide), <span class="dt">sep =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">times =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="dt">direction =</span> <span class="st">&quot;long&quot;</span>,</a>
-<a class="sourceLine" id="cb2-2" title="2">        <span class="dt">varying =</span> <span class="kw">c</span>(<span class="st">&quot;Q1_W1&quot;</span>, <span class="st">&quot;Q1_W2&quot;</span>, <span class="st">&quot;Q1_W3&quot;</span>, <span class="st">&quot;Q2_W1&quot;</span>, <span class="st">&quot;Q2_W2&quot;</span>, <span class="st">&quot;Q2_W3&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">reshape</span>(<span class="kw">as.data.frame</span>(wide), <span class="dt">sep =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">times =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="dt">direction =</span> <span class="st">&quot;long&quot;</span>,</a>
+<a class="sourceLine" id="cb3-2" title="2">        <span class="dt">varying =</span> <span class="kw">c</span>(<span class="st">&quot;Q1_W1&quot;</span>, <span class="st">&quot;Q1_W2&quot;</span>, <span class="st">&quot;Q1_W3&quot;</span>, <span class="st">&quot;Q2_W1&quot;</span>, <span class="st">&quot;Q2_W2&quot;</span>, <span class="st">&quot;Q2_W3&quot;</span>))</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -685,8 +684,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <li>There is a prefix (<code>W</code>) and suffix (<code>_</code>).</li>
 </ul>
 <p>While you don’t have to recognize this to use the function properly, notice that in this case <code>Q2</code> was only measured at times A and C. This can add considerable difficulty to when trying to reshape data “by hand.”</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">suffix =</span> <span class="st">&quot;_&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>,</a>
-<a class="sourceLine" id="cb3-2" title="2">           <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">suffix =</span> <span class="st">&quot;_&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>,</a>
+<a class="sourceLine" id="cb4-2" title="2">           <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -864,7 +863,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 <p>But obviously just because the wide data marked <code>race</code> with a wave label, that doesn’t mean it was unknown in the other waves. You’ll get the right result with <code>long_panel()</code>:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -980,7 +979,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 <p>My ID variable was called <code>CaseID</code> and the periods — which were A, B, and C — were labeled at the <em>beginning</em> of the column names. Following the earlier examples, this will confuse <code>long_panel()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -1051,8 +1050,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </div>
 <p>See what happened? The <code>Consent</code> variable in the wide data looked just like a constant variable that was measured at time point C. This isn’t the end of the world, but errors like this can be more confusing and damaging in other scenarios. Fortunately, I knew more about the labeling of the time-varying variables than what I told <code>long_panel()</code>. Yes, there is A/B/C at the beginning with no prefix/suffix, but also each time-varying item has a <em>number</em> that comes after A/B/C.</p>
 <p><code>long_panel()</code> offers the argument <code>match</code> for situations like these. This is the regular expression used to match and then capture the variable name sans time indicator. By default, <code>match</code> is <code>&quot;.*&quot;</code>, meaning any character any number of times. To reflect what I know about these data, I change it to <code>&quot;\\d+.*&quot;</code>, meaning at least one digit following by any number of other characters.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, </a>
-<a class="sourceLine" id="cb6-2" title="2">           <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>, <span class="dt">match =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+.*&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, </a>
+<a class="sourceLine" id="cb7-2" title="2">           <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>, <span class="dt">match =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+.*&quot;</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -1208,7 +1207,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </table>
 </div>
 <p>Okay, so we have an ID variable (<code>person</code>), wave variable (<code>time</code>), two time-varying variables (<code>Q1</code> and <code>Q2</code>), and a time-invariant variable (<code>race</code>). The only difficulty here conceptually is how to automatically know, without the domain knowledge about the substantive meaning of these variables, which ones vary over time and which don’t. This is simply a matter of <code>widen_panel()</code> checking the variance of each (using the <code>panelr</code> function <code>are_varying()</code>). Note that in very wide datasets, or those with many individuals, this can take a little while to happen.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">widen_panel</span>(long_data, <span class="dt">separator =</span> <span class="st">&quot;_&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">widen_panel</span>(long_data, <span class="dt">separator =</span> <span class="st">&quot;_&quot;</span>)</a></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -1262,6 +1261,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p><code>ignore.attributes</code> deals with the scenario in which you started with wide data, used <code>long_panel()</code> to convert to long format, and now want to convert back to wide format. <code>long_panel()</code> stores information in the data frame about which variables vary over time so that they don’t have to be checked all over again. If you’ve made changes or think something went wrong, you can set <code>ignore.attributes</code> to <code>TRUE</code> to force those checks all over again.</p>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
