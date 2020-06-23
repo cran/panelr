@@ -1,1280 +1,599 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<meta charset="utf-8" />
-<meta name="generator" content="pandoc" />
-<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+<title>From wide to long</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<meta name="author" content="Jacob A. Long" />
-
-<meta name="date" content="2020-03-08" />
-
-<title>Reshaping panel data with long_panel() and widen_panel()</title>
-
-
-
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+};
+</script>
 
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
 </style>
-<script>
-// apply pandoc div.sourceCode style to pre.sourceCode instead
-(function() {
-  var sheets = document.styleSheets;
-  for (var i = 0; i < sheets.length; i++) {
-    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
-    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
-      var rule = rules[j];
-      // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
-      var style = rule.style.cssText;
-      // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
-      // replace div.sourceCode by a pre.sourceCode rule
-      sheets[i].deleteRule(j);
-      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
-    }
-  }
-})();
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
 </script>
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
 }
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
 }
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
 }
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
+
+h1 {
+   font-size:2.2em;
 }
-#TOC ul ul {
-margin-left: -2em;
+
+h2 {
+   font-size:1.8em;
 }
-#TOC li {
-line-height: 16px;
+
+h3 {
+   font-size:1.4em;
 }
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
+
+h4 {
+   font-size:1.0em;
 }
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
+
+h5 {
+   font-size:0.9em;
 }
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
+
+h6 {
+   font-size:0.8em;
 }
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
 }
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
+
+pre, img {
+  max-width: 100%;
 }
 pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
+  overflow-x: auto;
 }
-pre:not([class]) {
-background-color: #f7f7f7;
+pre code {
+   display: block; padding: 0.5em;
 }
+
 code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
+  font-size: 92%;
+  border: 1px solid #ccc;
 }
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
 
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; } 
-code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
 </style>
-
 
 
 
 </head>
 
 <body>
+<p>One of the initial challenges a data analyst is likely to face with panel data
+is getting it into a format suitable for analysis. Most regression analyses for
+panel data require the data to be in <strong>long</strong> format. That means there is a 
+row for each entity (e.g., person) at each time point. If I conducted a 3-wave
+panel survey of 300 people, each of whom responded to all 3 waves, the long
+format of these data would have 900 rows (300 respondents x 3 waves).</p>
 
+<p>For example, the following is how long data look, where <code>id</code> is the identifier
+for each entity, <code>wave</code> is the indicator of the time point, and <code>Q1</code>/<code>Q2</code> are
+measures repeated at each time point.</p>
 
+<pre><code># A tibble: 9 x 4
+  id     wave    Q1    Q2
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1         1   1     5  
+2 1         2   1.5   7.5
+3 1         3   2    10  
+4 2         1   5    14  
+5 2         2   4    10.5
+6 2         3   3     7  
+7 3         1  15     8  
+8 3         2  12    12  
+9 3         3   9    16  
+</code></pre>
 
+<p><strong>Wide</strong> data, on the other hand, have only one row per entity and a separate
+column for each measure and time point. The same data above in wide format 
+look like this:</p>
 
-<h1 class="title toc-ignore">Reshaping panel data with <code>long_panel()</code> and <code>widen_panel()</code></h1>
-<h4 class="author">Jacob A. Long</h4>
-<h4 class="date">2020-03-08</h4>
+<pre><code># A tibble: 3 x 7
+  id    Q1_W1 Q1_W2 Q1_W3 Q2_W1 Q2_W2 Q2_W3
+  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1         1   1.5     2     5   7.5    10
+2 2         5   4       3    14  10.5     7
+3 3        15  12       9     8  12      16
+</code></pre>
 
+<p>Here you differentiate between waves by looking at the column name, which in 
+this case end in &ldquo;_W&rdquo; and then the wave indicator. Some analyses prefer the
+data in this format, like structural equation models. </p>
 
+<p><code>panelr</code> considers the native format of panel data to be <em>long</em> and provides the
+<code>panel_data</code> class to keep your data tidy in the long format. Of course,
+sometimes your raw data aren&#39;t in long format and need to be &ldquo;reshaped&rdquo; from 
+wide to long. In other cases, you have long format data but need to get it into
+wide format for some reason or another. <code>panelr</code> provides tools to help with
+these situations.</p>
 
-<p>One of the initial challenges a data analyst is likely to face with panel data is getting it into a format suitable for analysis. Most regression analyses for panel data require the data to be in <strong>long</strong> format. That means there is a row for each entity (e.g., person) at each time point. If I conducted a 3-wave panel survey of 300 people, each of whom responded to all 3 waves, the long format of these data would have 900 rows (300 respondents x 3 waves).</p>
-<p>For example, the following is how long data look, where <code>id</code> is the identifier for each entity, <code>wave</code> is the indicator of the time point, and <code>Q1</code>/<code>Q2</code> are measures repeated at each time point.</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">wave</th>
-<th align="right">Q1</th>
-<th align="right">Q2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.0</td>
-<td align="right">5.0</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="right">2</td>
-<td align="right">1.5</td>
-<td align="right">7.5</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">1</td>
-<td align="right">5.0</td>
-<td align="right">14.0</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="right">2</td>
-<td align="right">4.0</td>
-<td align="right">10.5</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">3</td>
-<td align="right">3.0</td>
-<td align="right">7.0</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">1</td>
-<td align="right">15.0</td>
-<td align="right">8.0</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="right">2</td>
-<td align="right">12.0</td>
-<td align="right">12.0</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">3</td>
-<td align="right">9.0</td>
-<td align="right">16.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Wide</strong> data, on the other hand, have only one row per entity and a separate column for each measure and time point. The same data above in wide format look like this:</p>
-<pre><code>Warning: package &#39;Matrix&#39; was built under R version 3.6.2</code></pre>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">Q1_W1</th>
-<th align="right">Q1_W2</th>
-<th align="right">Q1_W3</th>
-<th align="right">Q2_W1</th>
-<th align="right">Q2_W2</th>
-<th align="right">Q2_W3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.5</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">7.5</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">5</td>
-<td align="right">4.0</td>
-<td align="right">3</td>
-<td align="right">14</td>
-<td align="right">10.5</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">15</td>
-<td align="right">12.0</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">12.0</td>
-<td align="right">16</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Here you differentiate between waves by looking at the column name, which in this case end in &quot;_W&quot; and then the wave indicator. Some analyses prefer the data in this format, like structural equation models.</p>
-<p><code>panelr</code> considers the native format of panel data to be <em>long</em> and provides the <code>panel_data</code> class to keep your data tidy in the long format. Of course, sometimes your raw data aren’t in long format and need to be “reshaped” from wide to long. In other cases, you have long format data but need to get it into wide format for some reason or another. <code>panelr</code> provides tools to help with these situations.</p>
-<p>There are some other tools, including ones that <code>panelr</code> uses internally, that can manage these situations. However, they tend to be some combination of confusing, inflexible, or too general to be easily used for these purposes by non-experts.</p>
-<div id="from-wide-to-long" class="section level2">
+<p>There are some other tools, including ones that <code>panelr</code> uses internally, that
+can manage these situations. However, they tend to be some combination of 
+confusing, inflexible, or too general to be easily used for these purposes by
+non-experts.</p>
+
 <h2>From wide to long</h2>
-<p>In my experience, survey contractors (i.e., the people you pay to carry out panel surveys) like to provide the data in wide format. As a general rule, the conversion of data from wide to long is much more difficult than the inverse. When preparing to reshape data from wide to long format, you’ll need to answer some questions relating to how the column/variable names distinguish the variable name from the time indicator:</p>
+
+<p>In my experience, survey contractors (i.e., the people you pay to carry out 
+panel surveys) like to provide the data in wide format. As a general rule, the
+conversion of data from wide to long is much more difficult than the inverse.
+When preparing to reshape data from wide to long format, you&#39;ll need to 
+answer some questions relating to how the column/variable names distinguish the
+variable name from the time indicator:</p>
+
 <ul>
 <li>What are the time indicators: numbers, letters, something else?</li>
 <li>Are the time labels at the beginning or end of the column name?</li>
-<li>Are there prefixes or suffixes surrounding the time indicator (e.g., a name like <code>W1_variable</code> has both prefix (<code>W</code>) and suffix (<code>_</code>)).</li>
+<li>Are there prefixes or suffixes surrounding the time indicator (e.g., 
+a name like <code>W1_variable</code> has both prefix (<code>W</code>) and suffix (<code>_</code>)).</li>
 </ul>
-<p>One key assumption is that variables labeled with a pattern such as <code>Q1_W1</code>, <code>Q1_W2</code>, and so on refer to the <em>same measure</em> at different times. I’ve encountered datasets in which <code>Q1</code> might refer to a different measure at each time point and this is not a problem that can be handled in an automated way.</p>
-<p>With that warning out of the way, let’s look at a couple examples.</p>
-<div id="wave-indicators-at-the-end-of-variable-names" class="section level3">
+
+<p>One key assumption is that variables labeled with a pattern such as 
+<code>Q1_W1</code>, <code>Q1_W2</code>, and so on refer to the <em>same measure</em> at different times.
+I&#39;ve encountered datasets in which <code>Q1</code> might refer to a different measure at
+each time point and this is not a problem that can be handled in an automated
+way.</p>
+
+<p>With that warning out of the way, let&#39;s look at a couple examples.</p>
+
 <h3>Wave indicators at the end of variable names</h3>
-<p>Let’s return to the wide data we looked at earlier.</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">Q1_W1</th>
-<th align="right">Q1_W2</th>
-<th align="right">Q1_W3</th>
-<th align="right">Q2_W1</th>
-<th align="right">Q2_W2</th>
-<th align="right">Q2_W3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.5</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">7.5</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">5</td>
-<td align="right">4.0</td>
-<td align="right">3</td>
-<td align="right">14</td>
-<td align="right">10.5</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">15</td>
-<td align="right">12.0</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">12.0</td>
-<td align="right">16</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Here we can see that the time indicators are at the <em>end</em> of the variable names (<code>_W1</code>), time indicators of 1, 2, and 3, and a <em>prefix</em> of <code>_W</code>. With that in mind, we can use <code>long_panel()</code> to convert the data to long format.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">wave</th>
-<th align="right">Q1</th>
-<th align="right">Q2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.0</td>
-<td align="right">5.0</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="right">2</td>
-<td align="right">1.5</td>
-<td align="right">7.5</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">1</td>
-<td align="right">5.0</td>
-<td align="right">14.0</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="right">2</td>
-<td align="right">4.0</td>
-<td align="right">10.5</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">3</td>
-<td align="right">3.0</td>
-<td align="right">7.0</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">1</td>
-<td align="right">15.0</td>
-<td align="right">8.0</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="right">2</td>
-<td align="right">12.0</td>
-<td align="right">12.0</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">3</td>
-<td align="right">9.0</td>
-<td align="right">16.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Perfect! The first argument, <code>w</code>, was the wide data. <code>prefix</code> is self-explanatory. <code>begin</code> and <code>end</code> refer to the range of the time indicators, since they are consecutive. You can instead use <code>periods = c(1, 2, 3)</code> if you prefer. That’s especially true if you have non-consecutive time indicators like a biannual survey that uses the year as an indicator, like <code>periods = c(1990, 1992, 1994)</code>.</p>
-</div>
-<div id="comparing-with-base-r" class="section level3">
+
+<p>Let&#39;s return to the wide data we looked at earlier.</p>
+
+<pre><code># A tibble: 3 x 7
+  id    Q1_W1 Q1_W2 Q1_W3 Q2_W1 Q2_W2 Q2_W3
+  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1         1   1.5     2     5   7.5    10
+2 2         5   4       3    14  10.5     7
+3 3        15  12       9     8  12      16
+</code></pre>
+
+<p>Here we can see that the time indicators are at the <em>end</em> of the variable names
+(<code>_W1</code>), time indicators of 1, 2, and 3, and a <em>prefix</em> of <code>_W</code>. With that in
+mind, we can use <code>long_panel()</code> to convert the data to long format.</p>
+
+<pre><code class="r">long_panel(wide, prefix = &quot;_W&quot;, begin = 1, end = 3, label_location = &quot;end&quot;)
+# Panel data:    9 x 4
+# entities:      id [3]
+# wave variable: wave [1, 2, 3 (3 waves)]
+  id     wave    Q1    Q2
+  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1         1   1     5  
+2 1         2   1.5   7.5
+3 1         3   2    10  
+4 2         1   5    14  
+5 2         2   4    10.5
+6 2         3   3     7  
+7 3         1  15     8  
+8 3         2  12    12  
+9 3         3   9    16  
+</code></pre>
+
+<p>Perfect! The first argument, <code>w</code>, was the wide data. <code>prefix</code> is 
+self-explanatory. <code>begin</code> and <code>end</code> refer to the range of the time indicators,
+since they are consecutive. You can instead use <code>periods = c(1, 2, 3)</code> if 
+you prefer. That&#39;s especially true if you have non-consecutive time indicators
+like a biannual survey that uses the year as an indicator, like 
+<code>periods = c(1990, 1992, 1994)</code>.</p>
+
 <h3>Comparing with base R</h3>
-<p>I should note that base R has a function, <code>reshape()</code> that can work in this situation without making you pull your hair out too much:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">reshape</span>(<span class="kw">as.data.frame</span>(wide), <span class="dt">sep =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">times =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="dt">direction =</span> <span class="st">&quot;long&quot;</span>,</a>
-<a class="sourceLine" id="cb3-2" title="2">        <span class="dt">varying =</span> <span class="kw">c</span>(<span class="st">&quot;Q1_W1&quot;</span>, <span class="st">&quot;Q1_W2&quot;</span>, <span class="st">&quot;Q1_W3&quot;</span>, <span class="st">&quot;Q2_W1&quot;</span>, <span class="st">&quot;Q2_W2&quot;</span>, <span class="st">&quot;Q2_W3&quot;</span>))</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th></th>
-<th align="left">id</th>
-<th align="right">time</th>
-<th align="right">Q1</th>
-<th align="right">Q2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1.1</td>
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.0</td>
-<td align="right">5.0</td>
-</tr>
-<tr class="even">
-<td>2.1</td>
-<td align="left">2</td>
-<td align="right">1</td>
-<td align="right">5.0</td>
-<td align="right">14.0</td>
-</tr>
-<tr class="odd">
-<td>3.1</td>
-<td align="left">3</td>
-<td align="right">1</td>
-<td align="right">15.0</td>
-<td align="right">8.0</td>
-</tr>
-<tr class="even">
-<td>1.2</td>
-<td align="left">1</td>
-<td align="right">2</td>
-<td align="right">1.5</td>
-<td align="right">7.5</td>
-</tr>
-<tr class="odd">
-<td>2.2</td>
-<td align="left">2</td>
-<td align="right">2</td>
-<td align="right">4.0</td>
-<td align="right">10.5</td>
-</tr>
-<tr class="even">
-<td>3.2</td>
-<td align="left">3</td>
-<td align="right">2</td>
-<td align="right">12.0</td>
-<td align="right">12.0</td>
-</tr>
-<tr class="odd">
-<td>1.3</td>
-<td align="left">1</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="right">10.0</td>
-</tr>
-<tr class="even">
-<td>2.3</td>
-<td align="left">2</td>
-<td align="right">3</td>
-<td align="right">3.0</td>
-<td align="right">7.0</td>
-</tr>
-<tr class="odd">
-<td>3.3</td>
-<td align="left">3</td>
-<td align="right">3</td>
-<td align="right">9.0</td>
-<td align="right">16.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>You can see how frustrating that could be if you had many more variables — it wouldn’t be unusual to have hundreds of columns in the wide format, not all of which would be variables that vary over time (e.g., race). Truth be told, <code>long_panel()</code> uses <code>reshape()</code> internally, but only after a lot of processing. Other options include the <code>reshape2</code> and <code>tidyr</code> packages, but they are not purpose-built for the panel setting and therefore can have a learning curve to avoid having data that end up a bit <em>too</em> long.</p>
-</div>
-<div id="a-more-challenging-example" class="section level3">
+
+<p>I should note that base R has a function, <code>reshape()</code> that can work in this 
+situation without making you pull your hair out too much:</p>
+
+<pre><code class="r">reshape(as.data.frame(wide), sep = &quot;_W&quot;, times = c(1, 2, 3), direction = &quot;long&quot;,
+        varying = c(&quot;Q1_W1&quot;, &quot;Q1_W2&quot;, &quot;Q1_W3&quot;, &quot;Q2_W1&quot;, &quot;Q2_W2&quot;, &quot;Q2_W3&quot;))
+    id time   Q1   Q2
+1.1  1    1  1.0  5.0
+2.1  2    1  5.0 14.0
+3.1  3    1 15.0  8.0
+1.2  1    2  1.5  7.5
+2.2  2    2  4.0 10.5
+3.2  3    2 12.0 12.0
+1.3  1    3  2.0 10.0
+2.3  2    3  3.0  7.0
+3.3  3    3  9.0 16.0
+</code></pre>
+
+<p>You can see how frustrating that could be if you had many more variables &mdash; 
+it wouldn&#39;t be unusual to have hundreds of columns in the wide format, not all
+of which would be variables that vary over time (e.g., race). Truth be told,
+<code>long_panel()</code> uses <code>reshape()</code> internally, but only after a lot of processing.
+Other options include the <code>reshape2</code> and <code>tidyr</code> packages, but they are not 
+purpose-built for the panel setting and therefore can have a learning curve
+to avoid having data that end up a bit <em>too</em> long.</p>
+
 <h3>A more challenging example</h3>
-<p>Here’s a wide dataset with what is usually a trickier format to handle due to limitations of <code>reshape()</code>.</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="right">WA_Q1</th>
-<th align="right">WB_Q1</th>
-<th align="right">WC_Q1</th>
-<th align="right">WA_Q2</th>
-<th align="right">WC_Q2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1.5</td>
-<td align="right">2</td>
-<td align="right">5</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="right">5</td>
-<td align="right">4.0</td>
-<td align="right">3</td>
-<td align="right">14</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="right">15</td>
-<td align="right">12.0</td>
-<td align="right">9</td>
-<td align="right">8</td>
-<td align="right">16</td>
-</tr>
-</tbody>
-</table>
-</div>
+
+<p>Here&#39;s a wide dataset with what is usually a trickier format to handle due to
+limitations of <code>reshape()</code>.</p>
+
+<pre><code># A tibble: 3 x 5
+  WA_Q1 WB_Q1 WC_Q1 WA_Q2 WC_Q2
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1   1.5     2     5    10
+2     5   4       3    14     7
+3    15  12       9     8    16
+</code></pre>
+
 <p>Key characteristics:</p>
+
 <ul>
 <li>Wave indicators are at the <em>beginning</em> of the variable names.</li>
 <li>The time indicators are <em>letters</em>, from A to C.</li>
 <li>There is a prefix (<code>W</code>) and suffix (<code>_</code>).</li>
 </ul>
-<p>While you don’t have to recognize this to use the function properly, notice that in this case <code>Q2</code> was only measured at times A and C. This can add considerable difficulty to when trying to reshape data “by hand.”</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;W&quot;</span>, <span class="dt">suffix =</span> <span class="st">&quot;_&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>,</a>
-<a class="sourceLine" id="cb4-2" title="2">           <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="left">wave</th>
-<th align="right">Q1</th>
-<th align="right">Q2</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">A</td>
-<td align="right">1.0</td>
-<td align="right">5</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">1.5</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">C</td>
-<td align="right">2.0</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">A</td>
-<td align="right">5.0</td>
-<td align="right">14</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="left">B</td>
-<td align="right">4.0</td>
-<td align="right">NA</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">C</td>
-<td align="right">3.0</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">A</td>
-<td align="right">15.0</td>
-<td align="right">8</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="left">B</td>
-<td align="right">12.0</td>
-<td align="right">NA</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">C</td>
-<td align="right">9.0</td>
-<td align="right">16</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Just what we were looking for. Note that <code>panel_data</code> objects must have an ordered wave variable, but <code>long_data()</code> understands how to order letters and handles that for you. The missingness in <code>Q2</code> is by design, since it wasn’t measured in wave B.</p>
-<p>Another issue that can come up is the treatment of constants — that is, variables that do not change over time. The best wide data should come labeled in a way that makes it clear the constants are constants. For instance, a variable signifying race wouldn’t be called <code>race_W1</code>, but instead just <code>race</code>. <code>long_panel()</code> automatically checks your data for variables that are labeled as if they vary over time but actually do not.</p>
+
+<p>While you don&#39;t have to recognize this to use the function properly, notice that
+in this case <code>Q2</code> was only measured at times A and C. This can add considerable
+difficulty to when trying to reshape data &ldquo;by hand.&rdquo;</p>
+
+<pre><code class="r">long_panel(wide, prefix = &quot;W&quot;, suffix = &quot;_&quot;, label_location = &quot;beginning&quot;,
+           begin = &quot;A&quot;, end = &quot;C&quot;)
+# Panel data:    9 x 4
+# entities:      id [3]
+# wave variable: wave [A, B, C (3 waves)]
+  id    wave     Q1    Q2
+  &lt;fct&gt; &lt;ord&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1     A       1       5
+2 1     B       1.5    NA
+3 1     C       2      10
+4 2     A       5      14
+5 2     B       4      NA
+6 2     C       3       7
+7 3     A      15       8
+8 3     B      12      NA
+9 3     C       9      16
+</code></pre>
+
+<p>Just what we were looking for. Note that <code>panel_data</code> objects must have an
+ordered wave variable, but <code>long_data()</code> understands how to order letters and
+handles that for you. The missingness in <code>Q2</code> is by design, since it 
+wasn&#39;t measured in wave B. </p>
+
+<p>Another issue that can come up is the treatment of constants &mdash; that is, 
+variables that do not change over time. The best wide data should come labeled
+in a way that makes it clear the constants are constants. For instance, a 
+variable signifying race wouldn&#39;t be called <code>race_W1</code>, but instead just <code>race</code>.
+<code>long_panel()</code> automatically checks your data for variables that are labeled
+as if they vary over time but actually do not.</p>
+
 <p>For instance, data that start by looking like this:</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">Q1_W1</th>
-<th align="right">Q1_W2</th>
-<th align="right">Q1_W3</th>
-<th align="left">race_W1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1.5</td>
-<td align="right">2</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">4</td>
-<td align="right">3.0</td>
-<td align="right">2</td>
-<td align="left">black</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">15</td>
-<td align="right">12.0</td>
-<td align="right">9</td>
-<td align="left">white</td>
-</tr>
-</tbody>
-</table>
-</div>
+
+<pre><code># A tibble: 3 x 5
+     id Q1_W1 Q1_W2 Q1_W3 race_W1
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  
+1     1     1   1.5     2 white  
+2     2     4   3       2 black  
+3     3    15  12       9 white  
+</code></pre>
+
 <p>Can easily end up shaped like this:</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="right">id</th>
-<th align="right">wave</th>
-<th align="left">race</th>
-<th align="right">Q1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="left">white</td>
-<td align="right">1.0</td>
-</tr>
-<tr class="even">
-<td align="right">1</td>
-<td align="right">2</td>
-<td align="left">NA</td>
-<td align="right">1.5</td>
-</tr>
-<tr class="odd">
-<td align="right">1</td>
-<td align="right">3</td>
-<td align="left">NA</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">1</td>
-<td align="left">black</td>
-<td align="right">4.0</td>
-</tr>
-<tr class="odd">
-<td align="right">2</td>
-<td align="right">2</td>
-<td align="left">NA</td>
-<td align="right">3.0</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="right">3</td>
-<td align="left">NA</td>
-<td align="right">2.0</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">1</td>
-<td align="left">white</td>
-<td align="right">15.0</td>
-</tr>
-<tr class="even">
-<td align="right">3</td>
-<td align="right">2</td>
-<td align="left">NA</td>
-<td align="right">12.0</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="right">3</td>
-<td align="left">NA</td>
-<td align="right">9.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>But obviously just because the wide data marked <code>race</code> with a wave label, that doesn’t mean it was unknown in the other waves. You’ll get the right result with <code>long_panel()</code>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">prefix =</span> <span class="st">&quot;_W&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;end&quot;</span>, <span class="dt">begin =</span> <span class="dv">1</span>, <span class="dt">end =</span> <span class="dv">3</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">id</th>
-<th align="right">wave</th>
-<th align="right">Q1</th>
-<th align="left">race</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="right">2</td>
-<td align="right">1.5</td>
-<td align="left">white</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">1</td>
-<td align="right">4.0</td>
-<td align="left">black</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="right">2</td>
-<td align="right">3.0</td>
-<td align="left">black</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="left">black</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">1</td>
-<td align="right">15.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="right">2</td>
-<td align="right">12.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">3</td>
-<td align="right">9.0</td>
-<td align="left">white</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div id="other-details" class="section level3">
+
+<pre><code># A tibble: 9 x 4
+     id  wave race     Q1
+  &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+1     1     1 white   1  
+2     1     2 &lt;NA&gt;    1.5
+3     1     3 &lt;NA&gt;    2  
+4     2     1 black   4  
+5     2     2 &lt;NA&gt;    3  
+6     2     3 &lt;NA&gt;    2  
+7     3     1 white  15  
+8     3     2 &lt;NA&gt;   12  
+9     3     3 &lt;NA&gt;    9  
+</code></pre>
+
+<p>But obviously just because the wide data marked <code>race</code> with a wave label, that
+doesn&#39;t mean it was unknown in the other waves. You&#39;ll get the right result
+with <code>long_panel()</code>:</p>
+
+<pre><code class="r">long_panel(wide, prefix = &quot;_W&quot;, label_location = &quot;end&quot;, begin = 1, end = 3)
+# Panel data:    9 x 4
+# entities:      id [3]
+# wave variable: wave [1, 2, 3 (3 waves)]
+  id     wave    Q1 race 
+  &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+1 1         1   1   white
+2 1         2   1.5 white
+3 1         3   2   white
+4 2         1   4   black
+5 2         2   3   black
+6 2         3   2   black
+7 3         1  15   white
+8 3         2  12   white
+9 3         3   9   white
+</code></pre>
+
 <h3>Other details</h3>
-<p>If you have an ID variable in the wide data, you can pass the name of that variable to <code>long_panel()</code> with the <code>id</code> argument, which is <code>&quot;id&quot;</code> by default. If there is no variable with the name you give to <code>id</code>, one will be created. You can also choose the name of the wave variable via <code>wave</code>, which is <code>&quot;wave&quot;</code> by default.</p>
-<p>You can also choose not to have the output of <code>long_panel()</code> be a <code>panel_data</code> object by setting <code>as_panel_data</code> to <code>FALSE</code>.</p>
-</div>
-<div id="advanced-options" class="section level3">
+
+<p>If you have an ID variable in the wide data, you can pass the name of that 
+variable to <code>long_panel()</code> with the <code>id</code> argument, which is <code>&quot;id&quot;</code> by default.
+If there is no variable with the name you give to <code>id</code>, one will be created.
+You can also choose the name of the wave variable via <code>wave</code>, which is <code>&quot;wave&quot;</code>
+by default.</p>
+
+<p>You can also choose not to have the output of <code>long_panel()</code> be a <code>panel_data</code>
+object by setting <code>as_panel_data</code> to <code>FALSE</code>.</p>
+
 <h3>Advanced options</h3>
-<p>There are some other options available to you for tougher cases. For instance, when <code>use.regex</code> is <code>TRUE</code>, the arguments for <code>prefix</code> and <code>suffix</code> are treated as regular expressions for more complicated patterns.</p>
-<p>Internally, time-varying variables are detected by the presence of <code>prefix</code>, one of the time periods, and <code>suffix</code> in the variable name. The “root” variable without the indicator is whatever is left. Sometimes, though, this can cause false matches. Here’s an example I have encountered. My wide data looked like this:</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="right">CaseID</th>
-<th align="left">Consent</th>
-<th align="right">A1</th>
-<th align="right">B1</th>
-<th align="right">C1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">1</td>
-<td align="left">TRUE</td>
-<td align="right">5</td>
-<td align="right">4</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="right">2</td>
-<td align="left">TRUE</td>
-<td align="right">6</td>
-<td align="right">7</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
-<td align="right">3</td>
-<td align="left">TRUE</td>
-<td align="right">10</td>
-<td align="right">8</td>
-<td align="right">6</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>My ID variable was called <code>CaseID</code> and the periods — which were A, B, and C — were labeled at the <em>beginning</em> of the column names. Following the earlier examples, this will confuse <code>long_panel()</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">CaseID</th>
-<th align="left">wave</th>
-<th align="right">1</th>
-<th align="left">onsent</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">A</td>
-<td align="right">5</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="right">4</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">A</td>
-<td align="right">6</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="left">B</td>
-<td align="right">7</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">C</td>
-<td align="right">8</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">A</td>
-<td align="right">10</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="left">B</td>
-<td align="right">8</td>
-<td align="left">TRUE</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">C</td>
-<td align="right">6</td>
-<td align="left">TRUE</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>See what happened? The <code>Consent</code> variable in the wide data looked just like a constant variable that was measured at time point C. This isn’t the end of the world, but errors like this can be more confusing and damaging in other scenarios. Fortunately, I knew more about the labeling of the time-varying variables than what I told <code>long_panel()</code>. Yes, there is A/B/C at the beginning with no prefix/suffix, but also each time-varying item has a <em>number</em> that comes after A/B/C.</p>
-<p><code>long_panel()</code> offers the argument <code>match</code> for situations like these. This is the regular expression used to match and then capture the variable name sans time indicator. By default, <code>match</code> is <code>&quot;.*&quot;</code>, meaning any character any number of times. To reflect what I know about these data, I change it to <code>&quot;\\d+.*&quot;</code>, meaning at least one digit following by any number of other characters.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">long_panel</span>(wide, <span class="dt">begin =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">end =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">label_location =</span> <span class="st">&quot;beginning&quot;</span>, </a>
-<a class="sourceLine" id="cb7-2" title="2">           <span class="dt">id =</span> <span class="st">&quot;CaseID&quot;</span>, <span class="dt">match =</span> <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d+.*&quot;</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">CaseID</th>
-<th align="left">wave</th>
-<th align="left">Consent</th>
-<th align="right">1</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">A</td>
-<td align="left">TRUE</td>
-<td align="right">5</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="left">B</td>
-<td align="left">TRUE</td>
-<td align="right">4</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">C</td>
-<td align="left">TRUE</td>
-<td align="right">3</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">A</td>
-<td align="left">TRUE</td>
-<td align="right">6</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="left">B</td>
-<td align="left">TRUE</td>
-<td align="right">7</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">C</td>
-<td align="left">TRUE</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">A</td>
-<td align="left">TRUE</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="left">B</td>
-<td align="left">TRUE</td>
-<td align="right">8</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">C</td>
-<td align="left">TRUE</td>
-<td align="right">6</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Now it rightly ignores <code>Consent</code> as a variable that lacks a time indicator. In general, <code>long_panel()</code> tries to protect you from having to use or even know how to use regular expressions, but sometimes there’s no way around it.</p>
-</div>
-</div>
-<div id="from-long-to-wide" class="section level2">
+
+<p>There are some other options available to you for tougher cases. For instance,
+when <code>use.regex</code> is <code>TRUE</code>, the arguments for <code>prefix</code> and <code>suffix</code> are treated
+as regular expressions for more complicated patterns. </p>
+
+<p>Internally, time-varying variables are detected by the presence of <code>prefix</code>,
+one of the time periods, and <code>suffix</code> in the variable name. The &ldquo;root&rdquo; variable
+without the indicator is whatever is left. Sometimes, though, this can cause
+false matches. Here&#39;s an example I have encountered. My wide data looked like
+this:</p>
+
+<pre><code># A tibble: 3 x 5
+  CaseID Consent    A1    B1    C1
+   &lt;dbl&gt; &lt;lgl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1      1 TRUE        5     4     3
+2      2 TRUE        6     7     8
+3      3 TRUE       10     8     6
+</code></pre>
+
+<p>My ID variable was called <code>CaseID</code> and the periods &mdash; which were A, B, and C
+&mdash; were labeled at the <em>beginning</em> of the column names. Following the earlier
+examples, this will confuse <code>long_panel()</code>:</p>
+
+<pre><code class="r">long_panel(wide, begin = &quot;A&quot;, end = &quot;C&quot;, label_location = &quot;beginning&quot;, id = &quot;CaseID&quot;)
+# Panel data:    9 x 4
+# entities:      CaseID [3]
+# wave variable: wave [A, B, C (3 waves)]
+  CaseID wave    `1` onsent
+  &lt;fct&gt;  &lt;ord&gt; &lt;dbl&gt; &lt;lgl&gt; 
+1 1      A         5 TRUE  
+2 1      B         4 TRUE  
+3 1      C         3 TRUE  
+4 2      A         6 TRUE  
+5 2      B         7 TRUE  
+6 2      C         8 TRUE  
+7 3      A        10 TRUE  
+8 3      B         8 TRUE  
+9 3      C         6 TRUE  
+</code></pre>
+
+<p>See what happened? The <code>Consent</code> variable in the wide data looked just like 
+a constant variable that was measured at time point C. This isn&#39;t the end of 
+the world, but errors like this can be more confusing and damaging in other 
+scenarios. Fortunately, I knew more about the labeling of the time-varying 
+variables than what I told <code>long_panel()</code>. Yes, there is A/B/C at the beginning
+with no prefix/suffix, but also each time-varying item has a <em>number</em> that comes
+after A/B/C. </p>
+
+<p><code>long_panel()</code> offers the argument <code>match</code> for situations like these. This is
+the regular expression used to match and then capture the variable name sans
+time indicator. By default, <code>match</code> is <code>&quot;.*&quot;</code>, meaning any character any number
+of times. To reflect what I know about these data, I change it to <code>&quot;\\d+.*&quot;</code>,
+meaning at least one digit following by any number of other characters.</p>
+
+<pre><code class="r">long_panel(wide, begin = &quot;A&quot;, end = &quot;C&quot;, label_location = &quot;beginning&quot;, 
+           id = &quot;CaseID&quot;, match = &quot;\\d+.*&quot;)
+# Panel data:    9 x 4
+# entities:      CaseID [3]
+# wave variable: wave [A, B, C (3 waves)]
+  CaseID wave  Consent   `1`
+  &lt;fct&gt;  &lt;ord&gt; &lt;lgl&gt;   &lt;dbl&gt;
+1 1      A     TRUE        5
+2 1      B     TRUE        4
+3 1      C     TRUE        3
+4 2      A     TRUE        6
+5 2      B     TRUE        7
+6 2      C     TRUE        8
+7 3      A     TRUE       10
+8 3      B     TRUE        8
+9 3      C     TRUE        6
+</code></pre>
+
+<p>Now it rightly ignores <code>Consent</code> as a variable that lacks a time indicator. 
+In general, <code>long_panel()</code> tries to protect you from having to use or even 
+know how to use regular expressions, but sometimes there&#39;s no way around it.</p>
+
 <h2>From long to wide</h2>
-<p><code>widen_panel()</code>, as you might expect, does the opposite of <code>long_panel()</code>. This is generally an easier operation, thankfully.</p>
-<p><code>widen_panel()</code> expects a <code>panel_data</code> object. If your long data aren’t in that format, it’s easy enough to just pass it to <code>panel_data()</code>.</p>
-<p>To go through an example, let’s take a look at some long data.</p>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">person</th>
-<th align="right">time</th>
-<th align="right">Q1</th>
-<th align="right">Q2</th>
-<th align="left">race</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">1</td>
-<td align="right">1.0</td>
-<td align="right">5.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">1</td>
-<td align="right">2</td>
-<td align="right">1.5</td>
-<td align="right">7.5</td>
-<td align="left">white</td>
-</tr>
-<tr class="odd">
-<td align="left">1</td>
-<td align="right">3</td>
-<td align="right">2.0</td>
-<td align="right">10.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">1</td>
-<td align="right">5.0</td>
-<td align="right">14.0</td>
-<td align="left">black</td>
-</tr>
-<tr class="odd">
-<td align="left">2</td>
-<td align="right">2</td>
-<td align="right">4.0</td>
-<td align="right">10.5</td>
-<td align="left">black</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="right">3</td>
-<td align="right">3.0</td>
-<td align="right">7.0</td>
-<td align="left">black</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">1</td>
-<td align="right">15.0</td>
-<td align="right">8.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="even">
-<td align="left">3</td>
-<td align="right">2</td>
-<td align="right">12.0</td>
-<td align="right">12.0</td>
-<td align="left">white</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="right">3</td>
-<td align="right">9.0</td>
-<td align="right">16.0</td>
-<td align="left">white</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Okay, so we have an ID variable (<code>person</code>), wave variable (<code>time</code>), two time-varying variables (<code>Q1</code> and <code>Q2</code>), and a time-invariant variable (<code>race</code>). The only difficulty here conceptually is how to automatically know, without the domain knowledge about the substantive meaning of these variables, which ones vary over time and which don’t. This is simply a matter of <code>widen_panel()</code> checking the variance of each (using the <code>panelr</code> function <code>are_varying()</code>). Note that in very wide datasets, or those with many individuals, this can take a little while to happen.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1"><span class="kw">widen_panel</span>(long_data, <span class="dt">separator =</span> <span class="st">&quot;_&quot;</span>)</a></code></pre></div>
-<div class="kable-table">
-<table>
-<thead>
-<tr class="header">
-<th align="left">person</th>
-<th align="left">race</th>
-<th align="right">Q1_1</th>
-<th align="right">Q2_1</th>
-<th align="right">Q1_2</th>
-<th align="right">Q2_2</th>
-<th align="right">Q1_3</th>
-<th align="right">Q2_3</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">1</td>
-<td align="left">white</td>
-<td align="right">1</td>
-<td align="right">5</td>
-<td align="right">1.5</td>
-<td align="right">7.5</td>
-<td align="right">2</td>
-<td align="right">10</td>
-</tr>
-<tr class="even">
-<td align="left">2</td>
-<td align="left">black</td>
-<td align="right">5</td>
-<td align="right">14</td>
-<td align="right">4.0</td>
-<td align="right">10.5</td>
-<td align="right">3</td>
-<td align="right">7</td>
-</tr>
-<tr class="odd">
-<td align="left">3</td>
-<td align="left">white</td>
-<td align="right">15</td>
-<td align="right">8</td>
-<td align="right">12.0</td>
-<td align="right">12.0</td>
-<td align="right">9</td>
-<td align="right">16</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Pretty much all you need to worry about is how you want to label the wide data. By default the <code>separator</code> argument is <code>&quot;_&quot;</code>.</p>
-<p>There are only two other arguments. <code>varying</code> lets you specify which variables in the long data vary over time. This can save you time compared to having <code>widen_panel()</code> check them all, but of course requires you to pass those variable names along which can be more work than it’s worth at times.</p>
-<p><code>ignore.attributes</code> deals with the scenario in which you started with wide data, used <code>long_panel()</code> to convert to long format, and now want to convert back to wide format. <code>long_panel()</code> stores information in the data frame about which variables vary over time so that they don’t have to be checked all over again. If you’ve made changes or think something went wrong, you can set <code>ignore.attributes</code> to <code>TRUE</code> to force those checks all over again.</p>
-</div>
 
+<p><code>widen_panel()</code>, as you might expect, does the opposite of <code>long_panel()</code>. This
+is generally an easier operation, thankfully. </p>
 
+<p><code>widen_panel()</code> expects a <code>panel_data</code> object. If your long data aren&#39;t in that
+format, it&#39;s easy enough to just pass it to <code>panel_data()</code>. </p>
 
-<!-- code folding -->
+<p>To go through an example, let&#39;s take a look at some long data.</p>
 
+<pre><code># Panel data:    9 x 5
+# entities:      person [3]
+# wave variable: time [1, 2, 3 (3 waves)]
+  person  time    Q1    Q2 race 
+  &lt;fct&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+1 1          1   1     5   white
+2 1          2   1.5   7.5 white
+3 1          3   2    10   white
+4 2          1   5    14   black
+5 2          2   4    10.5 black
+6 2          3   3     7   black
+7 3          1  15     8   white
+8 3          2  12    12   white
+9 3          3   9    16   white
+</code></pre>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
+<p>Okay, so we have an ID variable (<code>person</code>), wave variable (<code>time</code>), two 
+time-varying variables (<code>Q1</code> and <code>Q2</code>), and a time-invariant variable (<code>race</code>).
+The only difficulty here conceptually is how to automatically know, without
+the domain knowledge about the substantive meaning of these variables, which
+ones vary over time and which don&#39;t. This is simply a matter of <code>widen_panel()</code>
+checking the variance of each (using the <code>panelr</code> function <code>are_varying()</code>).
+Note that in very wide datasets, or those with many individuals, this can take 
+a little while to happen.</p>
+
+<pre><code class="r">widen_panel(long_data, separator = &quot;_&quot;)
+# A tibble: 3 x 8
+  person race   Q1_1  Q2_1  Q1_2  Q2_2  Q1_3  Q2_3
+  &lt;fct&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 1      white     1     5   1.5   7.5     2    10
+2 2      black     5    14   4    10.5     3     7
+3 3      white    15     8  12    12       9    16
+</code></pre>
+
+<p>Pretty much all you need to worry about is how you want to label the wide data.
+By default the <code>separator</code> argument is <code>&quot;_&quot;</code>. </p>
+
+<p>There are only two other arguments. <code>varying</code> lets you specify which variables
+in the long data vary over time. This can save you time compared to having 
+<code>widen_panel()</code> check them all, but of course requires you to pass those 
+variable names along which can be more work than it&#39;s worth at times.</p>
+
+<p><code>ignore.attributes</code> deals with the scenario in which you started with wide data,
+used <code>long_panel()</code> to convert to long format, and now want to convert back to
+wide format. <code>long_panel()</code> stores information in the data frame about which
+variables vary over time so that they don&#39;t have to be checked all over again.
+If you&#39;ve made changes or think something went wrong, you can set 
+<code>ignore.attributes</code> to <code>TRUE</code> to force those checks all over again.</p>
 
 </body>
+
 </html>

@@ -33,7 +33,7 @@ panel_data <- function(data, id = id, wave = wave, ...) {
   if (!is.factor(data[[id]])) {data[[id]] <- factor(data[[id]])}
 
   # Group by case ID
-  if (id %nin% group_vars(data)) {data <- group_by(data, !!sym(id), add = TRUE)}
+  if (id %nin% group_vars(data)) {data <- group_by(data, !!sym(id), .add = TRUE)}
   # Warn about multi-grouped DFs
   if (length(group_vars(data)) > 1) {
     msg_wrap("Detected additional grouping variables. Be aware this may
@@ -44,9 +44,9 @@ panel_data <- function(data, id = id, wave = wave, ...) {
   if (is.factor(data[[wave]]) & !is.ordered(data[[wave]])) {
     data[[wave]] <- factor(data[[wave]], ordered = TRUE)
     msg_wrap("Unordered factor wave variable was converted to ordered.
-             You may wish to check that the order is correct.")
+             You should check that the order is correct.")
     periods <- levels(data[[wave]])
-  } else if (!is.ordered(data[[wave]]) & !is.numeric(data[[wave]])) {
+  } else if (!valid_wave(data[[wave]])) {
     stop("The wave variable must be numeric or an ordered factor.")
   } else {
     periods <- sort(unique(data[[wave]]))
@@ -70,7 +70,7 @@ panel_data <- function(data, id = id, wave = wave, ...) {
   data <- tibble::new_tibble(data, ..., 
                              id = id,
                              wave = wave,
-                             subclass = c("panel_data", "grouped_df"),
+                             class = c("panel_data", "grouped_df"),
                              nrow = nrow(data),
                              periods = periods)
 
@@ -190,7 +190,7 @@ complete_data <- function(data, ..., formula = NULL, vars = NULL,
 
 is_varying <- function(data, variable) {
   
-  variable <- enquo(variable)
+  variable <- ensym(variable)
   
   out <- data %>%
     # For each group, does the variable vary?
@@ -413,6 +413,12 @@ get_id <- function(data) {
 #' @rdname get_wave
 get_periods <- function(data) {
   attr(data, "periods")
+}
+
+#' @importFrom methods is
+valid_wave <- function(x) {
+  is.numeric(x) | is.ordered(x) | is(x, "Date") | inherits(x, "POSIXct") |
+    inherits(x, "POSIXlt") | inherits(x, "POSIXt") | inherits(x, "difftime") 
 }
 
 ##### internal panel_data tools #############################################

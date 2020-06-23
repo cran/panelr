@@ -396,7 +396,9 @@ detrend <- function(data, pf, dt_order, balance_correction, dt_random) {
     drop_vars <- paste0(c(v_info$term, v_info$meanvar), "1")
     drop_vars <- drop_vars %just% names(data)
     if (length(drop_vars) > 0) {
-      drop_vars <- paste0("-`", drop_vars, "`")
+      drop_vars <- paste0(
+        '!contains(c(', paste0('"', drop_vars, '"', collapse = ", "), '))'
+      )
       data <- select(data, !!! parse_exprs(drop_vars))
     }
   }
@@ -530,7 +532,8 @@ fb <- function(term) {
 get_rhs <- function(x, which = 1, to.formula = FALSE) {
   # Coercing to formula can be useful, otherwise it's a call object
   if (to.formula == TRUE) {
-    as.formula(paste("~", deparse(attr(x, "rhs")[[which]])))
+    the_str <- paste("~", deparse(attr(x, "rhs")[[which]]), collapse = " ")
+    as.formula(gsub("\\n", "", the_str, fixed = TRUE))
   } else {
     attr(x, "rhs")[[which]]
   }

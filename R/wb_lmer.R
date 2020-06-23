@@ -59,13 +59,13 @@
 #'  calculate the product of the variables involved in the interaction before
 #'  those variables have their means subtracted and then subtract the mean of 
 #'  the product from the product term (see Schunk and Perales (2017)). 
-#'  Giesselmann and Schmidt-Catran (2018) show this method carries 
+#'  Giesselmann and Schmidt-Catran (2020) show this method carries 
 #'  between-entity differences that within models are designed to model out.
 #'  They suggest an alternate method (`"double-demean"`) in which the product
 #'  term is first calculated using the de-meaned lower-order variables and 
 #'  then the subject means are subtracted from this product term. Another 
 #'  option is to simply use the product term of the de-meaned variables
-#'  (`"raw"`), but Giesselmann and Schmidt-Catran (2018) show this method 
+#'  (`"raw"`), but Giesselmann and Schmidt-Catran (2020) show this method 
 #'  biases the results towards zero effect. The default is `"double-demean"`
 #'  but if emulating other software is the goal, `"demean"` might be 
 #'  preferred.
@@ -587,13 +587,19 @@ print.wbm <- function(x, ...) {
 #' @title Tidy methods for `wbm` models
 #' @description `panelr` provides methods to access `wbm` data in a tidy format
 #' @rdname wbm_tidiers
-#' @inheritParams broom::lme4_tidiers
+#' @inheritParams broom.mixed::lme4_tidiers
+#' @param effects A character vector including one or more of "fixed"
+#' (fixed-effect parameters); "ran_pars" (variances and covariances or
+#' standard deviations and correlations of random effect terms);
+#' "ran_vals" (conditional modes/BLUPs/latent variable estimates); or
+#' "ran_coefs" (predicted parameter values for each group, as returned by
+#' `coef.merMod`.
 #' @examples 
 #' data("WageData")
 #' wages <- panel_data(WageData, id = id, wave = t)
 #' model <- wbm(lwage ~ lag(union) + wks, data = wages)
-#' if (requireNamespace("broom")) {
-#'   broom::tidy(model)
+#' if (requireNamespace("broom.mixed")) {
+#'   broom.mixed::tidy(model)
 #' }
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {
@@ -606,8 +612,8 @@ tidy.wbm <- function(x, conf.int = FALSE, conf.level = .95,
                      effects = c("fixed", "ran_pars"), conf.method = "Wald",
                      ran_prefix = NULL, ...) {
   
-  if (!requireNamespace("broom")) {
-    stop_wrap("You must have the broom package to use tidy methods.")
+  if (!requireNamespace("broom.mixed")) {
+    stop_wrap("You must have the broom.mixed package to use tidy methods.")
   }
   
   # Going to get the organized values from the summary function
@@ -646,7 +652,7 @@ tidy.wbm <- function(x, conf.int = FALSE, conf.level = .95,
   }
   # Get the random effects if requested
   if ("ran_pars" %in% effects) {
-    ran_pars <- broom::tidy(as(x, switch(class(x), "wblm" = "lmerMod",
+    ran_pars <- broom.mixed::tidy(as(x, switch(class(x), "wblm" = "lmerMod",
                                              "wbglm" = "glmerMod")),
                             effects = "ran_pars", conf.method = conf.method,
                             conf.level = conf.level, ran_prefix = ran_prefix,
@@ -661,7 +667,7 @@ tidy.wbm <- function(x, conf.int = FALSE, conf.level = .95,
 }
 
 #' @rdname wbm_tidiers
-#' @inheritParams broom::lme4_tidiers
+#' @inheritParams broom.mixed::lme4_tidiers
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {
 #'   S3method(generics::glance, wbm)
@@ -689,7 +695,7 @@ summ.wbm <- function(model, ...) {
 }
 
 #' @rdname wbm_tidiers
-#' @inheritParams broom::lme4_tidiers
+#' @inheritParams broom.mixed::lme4_tidiers
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {
 #'   S3method(generics::glance, summ.wbm)
@@ -701,7 +707,7 @@ glance.summ.wbm <- function(x, ...) {
 }
 
 #' @rdname wbm_tidiers
-#' @inheritParams broom::lme4_tidiers
+#' @inheritParams broom.mixed::lme4_tidiers
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {
 #'   S3method(generics::tidy, summ.wbm)

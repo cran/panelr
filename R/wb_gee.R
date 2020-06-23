@@ -46,10 +46,9 @@
 #' *Annual Review of Psychology*, *62*, 583–619.
 #' https://doi.org/10.1146/annurev.psych.093008.100356
 #' 
-#' Giesselmann, M., & Schmidt-Catran, A. (2018). Interactions in fixed effects
-#' regression models (Discussion Papers of DIW Berlin No. 1748). 
-#' *DIW Berlin, German Institute for Economic Research*. 
-#' Retrieved from https://ideas.repec.org/p/diw/diwwpp/dp1748.html
+#' Giesselmann, M., & Schmidt-Catran, A. W. (2020). Interactions in fixed 
+#' effects regression models. *Sociological Methods & Research*, 1–28. 
+#' https://doi.org/10.1177/0049124120914934
 #'
 #' McNeish, D. (2019). Effect partitioning in cross-sectionally clustered data
 #'  without multilevel models. *Multivariate Behavioral Research*, 
@@ -393,8 +392,8 @@ print.wbgee <- function(x, ...) {
 #' data("WageData")
 #' wages <- panel_data(WageData, id = id, wave = t)
 #' model <- wbgee(lwage ~ lag(union) + wks, data = wages)
-#' if (requireNamespace("broom")) {
-#'   broom::tidy(model)
+#' if (requireNamespace("generics")) {
+#'   generics::tidy(model)
 #' }
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {
@@ -405,8 +404,8 @@ print.wbgee <- function(x, ...) {
 
 tidy.wbgee <- function(x, conf.int = FALSE, conf.level = .95, ...) {
   
-  if (!requireNamespace("broom")) {
-    stop_wrap("You must have the broom package to use tidy methods.")
+  if (!requireNamespace("generics")) {
+    stop_wrap("You must have the generics package to use tidy methods.")
   }
   
   # Going to get the organized values from the summary function
