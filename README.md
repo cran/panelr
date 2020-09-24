@@ -28,7 +28,7 @@ GEE estimation via `geepack` (`wbgee()`).
 
 It also automates the fairly new “asymmetric effects” specification
 described by [Allison
-(2019)](http://journals.sagepub.com/doi/10.1177/2378023119826441) and
+(2019)](https://journals.sagepub.com/doi/10.1177/2378023119826441) and
 supports estimation via GLS for linear asymmetric effects models
 (`asym()`) and via GEE for non-Gaussian models (`asym_gee()`).
 
@@ -101,7 +101,7 @@ package](https://tibble.tidyverse.org/)) that are grouped by entity
 (i.e., the ID column).
 
 `panel_data` frames are meant to play nice with the
-[`tidyverse`](https://tidyverse.org). Here’s a quick sample of how a
+[`tidyverse`](https://www.tidyverse.org/). Here’s a quick sample of how a
 tidy workflow with `panelr` can work:
 
 ``` r
@@ -262,4 +262,4 @@ By participating in this project you agree to abide by its terms.
 ## License
 
 The source code of this package is licensed under the [MIT
-License](http://opensource.org/licenses/mit-license.php).
+License](https://opensource.org/licenses/mit-license.php).
