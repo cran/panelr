@@ -1,4 +1,6 @@
 ## ----setup, include = FALSE---------------------------------------------------
+required <- c("clubSandwich")
+if (!all(sapply(required, requireNamespace, quietly = TRUE)))
 knitr::opts_chunk$set(
   collapse = FALSE,
   comment = "",
