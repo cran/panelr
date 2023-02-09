@@ -7,7 +7,12 @@ knitr::opts_chunk$set(
   message = FALSE
 )
 
-## -----------------------------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
+library(panelr)
+data("teen_poverty")
+teen_poverty
+
+## ----echo = FALSE-------------------------------------------------------------
 library(panelr)
 data("teen_poverty")
 teen_poverty

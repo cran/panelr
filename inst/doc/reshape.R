@@ -1,12 +1,13 @@
 ## ----setup, include = FALSE---------------------------------------------------
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = ""
+  collapse = FALSE,
+  comment = "",
+  message = FALSE
 )
 
 ## ----echo = FALSE-------------------------------------------------------------
 tibble::tribble(
-  ~id, ~wave, ~Q1, ~Q2,
+  ~id, ~wave, ~Q1, ~Q2,  
   "1",     1,   1,   5,
   "1",     2, 1.5,  7.5,
   "1",     3,   2,  10,
