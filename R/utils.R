@@ -180,11 +180,13 @@ process_raw_newdata <- function(object, newdata) {
 #' @importFrom stats predict na.pass
 #' @inheritParams stats::predict.lm
 #' @examples 
-#' data("WageData")
-#' wages <- panel_data(WageData, id = id, wave = t)
-#' model <- wbgee(lwage ~ lag(union) + wks, data = wages)
-#' # By default, assumes you're using the processed data for newdata
-#' predict(model)
+#' if (requireNamespace("geepack")) {
+#'   data("WageData")
+#'   wages <- panel_data(WageData, id = id, wave = t)
+#'   model <- wbgee(lwage ~ lag(union) + wks, data = wages)
+#'   # By default, assumes you're using the processed data for newdata
+#'   predict(model)
+#' }
 #' @export
 #' @rdname predict.wbgee
 
@@ -346,6 +348,7 @@ npar.wbm <- function(object) {
 #' @description This S3 method allows you to retrieve the formula used to 
 #'  fit `wbm` objects.
 #' @inheritParams stats::formula
+#' @param x A `wbm` model.
 #' @param raw Return the formula used in the call to `lmerMod`/`glmerMod`?
 #'  Default is FALSE.
 #' @importFrom stats formula

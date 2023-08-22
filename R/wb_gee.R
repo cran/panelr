@@ -24,11 +24,13 @@
 #' other arguments.
 #'
 #' @examples
-#' data("WageData")
-#' wages <- panel_data(WageData, id = id, wave = t)
-#' model <- wbgee(lwage ~ lag(union) + wks | blk + fem | blk * lag(union),
-#'          data = wages)
-#' summary(model)
+#' if (requireNamespace("geepack")) {
+#'   data("WageData")
+#'   wages <- panel_data(WageData, id = id, wave = t)
+#'   model <- wbgee(lwage ~ lag(union) + wks | blk + fem | blk * lag(union),
+#'            data = wages)
+#'   summary(model)
+#' }
 #'
 #' @references
 #'
@@ -389,11 +391,13 @@ print.wbgee <- function(x, ...) {
 #'  to 0.95, which corresponds to a 95 percent confidence interval.
 #' @param ... Ignored
 #' @examples 
-#' data("WageData")
-#' wages <- panel_data(WageData, id = id, wave = t)
-#' model <- wbgee(lwage ~ lag(union) + wks, data = wages)
-#' if (requireNamespace("generics")) {
-#'   generics::tidy(model)
+#' if (requireNamespace("geepack")) {
+#'   data("WageData")
+#'   wages <- panel_data(WageData, id = id, wave = t)
+#'   model <- wbgee(lwage ~ lag(union) + wks, data = wages)
+#'   if (requireNamespace("generics")) {
+#'     generics::tidy(model)
+#'   }
 #' }
 #' @rawNamespace 
 #' if (getRversion() >= "3.6.0") {

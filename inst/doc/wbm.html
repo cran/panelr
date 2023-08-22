@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jacob A. Long" />
 
-<meta name="date" content="2023-02-08" />
+<meta name="date" content="2023-08-21" />
 
 <title>Introduction to the panelr package</title>
 
@@ -1506,7 +1506,7 @@ div.tocify {
 <h1 class="title toc-ignore">Introduction to the <code>panelr</code>
 package</h1>
 <h4 class="author">Jacob A. Long</h4>
-<h4 class="date">2023-02-08</h4>
+<h4 class="date">2023-08-21</h4>
 
 </div>
 
@@ -1523,24 +1523,24 @@ them.</li>
 <p>Check out the other vignette for a lot of detail on how to take your
 raw data and reshape it into a <code>panel_data</code> format. Here’s a
 short version, using some example data provided by this package.</p>
-<pre><code>## # A tibble: 1,151 × 28
-##       id  pov1 mother1 spouse1 inschool1 hours1  pov2 mother2 spouse2 inschool2
-##    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
-##  1    22     1       0       0         1     21     0       0       0         1
-##  2    75     0       0       0         1      8     0       0       0         1
-##  3    92     0       0       0         1     30     0       0       0         1
-##  4    96     0       0       0         0     19     1       1       0         0
-##  5   141     0       0       0         1      0     0       0       0         1
-##  6   161     0       0       0         1      0     0       0       0         1
-##  7   220     0       0       0         1      6     0       0       0         1
-##  8   229     0       0       0         1      0     1       0       0         1
-##  9   236     0       0       0         1      0     0       0       0         1
-## 10   240     0       0       0         1     18     1       0       0         1
-## # … with 1,141 more rows, and 18 more variables: hours2 &lt;dbl&gt;, pov3 &lt;dbl&gt;,
-## #   mother3 &lt;dbl&gt;, spouse3 &lt;dbl&gt;, inschool3 &lt;dbl&gt;, hours3 &lt;dbl&gt;, pov4 &lt;dbl&gt;,
-## #   mother4 &lt;dbl&gt;, spouse4 &lt;dbl&gt;, inschool4 &lt;dbl&gt;, hours4 &lt;dbl&gt;, age &lt;dbl&gt;,
-## #   black &lt;dbl&gt;, pov5 &lt;dbl&gt;, mother5 &lt;dbl&gt;, spouse5 &lt;dbl&gt;, inschool5 &lt;dbl&gt;,
-## #   hours5 &lt;dbl&gt;</code></pre>
+<pre><code># A tibble: 1,151 × 28
+      id  pov1 mother1 spouse1 inschool1 hours1  pov2 mother2 spouse2 inschool2
+   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;
+ 1    22     1       0       0         1     21     0       0       0         1
+ 2    75     0       0       0         1      8     0       0       0         1
+ 3    92     0       0       0         1     30     0       0       0         1
+ 4    96     0       0       0         0     19     1       1       0         0
+ 5   141     0       0       0         1      0     0       0       0         1
+ 6   161     0       0       0         1      0     0       0       0         1
+ 7   220     0       0       0         1      6     0       0       0         1
+ 8   229     0       0       0         1      0     1       0       0         1
+ 9   236     0       0       0         1      0     0       0       0         1
+10   240     0       0       0         1     18     1       0       0         1
+# ℹ 1,141 more rows
+# ℹ 18 more variables: hours2 &lt;dbl&gt;, pov3 &lt;dbl&gt;, mother3 &lt;dbl&gt;, spouse3 &lt;dbl&gt;,
+#   inschool3 &lt;dbl&gt;, hours3 &lt;dbl&gt;, pov4 &lt;dbl&gt;, mother4 &lt;dbl&gt;, spouse4 &lt;dbl&gt;,
+#   inschool4 &lt;dbl&gt;, hours4 &lt;dbl&gt;, age &lt;dbl&gt;, black &lt;dbl&gt;, pov5 &lt;dbl&gt;,
+#   mother5 &lt;dbl&gt;, spouse5 &lt;dbl&gt;, inschool5 &lt;dbl&gt;, hours5 &lt;dbl&gt;</code></pre>
 <p>These data come from a subset of young women surveyed as part of the
 National Longitudinal Survey of Youth starting in 1979. The
 <code>teen_poverty</code> data come in “wide” format, meaning there is
@@ -1551,22 +1551,22 @@ for each respondent in each wave of the 5-wave survey. We’ll use
 <code>long_panel()</code> for that.</p>
 <pre class="r"><code>teen &lt;- long_panel(teen_poverty, begin = 1, end = 5, label_location = &quot;end&quot;)
 teen</code></pre>
-<pre><code>## # Panel data:    5,755 × 9
-## # entities:      id [1151]
-## # wave variable: wave [1, 2, 3, ... (5 waves)]
-##    id     wave   age black   pov mother spouse inschool hours
-##    &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
-##  1 22        1    16     0     1      0      0        1    21
-##  2 22        2    16     0     0      0      0        1    15
-##  3 22        3    16     0     0      0      0        1     3
-##  4 22        4    16     0     0      0      0        1     0
-##  5 22        5    16     0     0      0      0        1     0
-##  6 75        1    17     0     0      0      0        1     8
-##  7 75        2    17     0     0      0      0        1     0
-##  8 75        3    17     0     0      0      0        1     0
-##  9 75        4    17     0     0      0      0        1     4
-## 10 75        5    17     0     1      0      0        1     0
-## # … with 5,745 more rows</code></pre>
+<pre><code># Panel data:    5,755 × 9
+# Entities:      id [1,151]
+# Wave variable: wave [1, 2, 3, ... (5 waves)]
+   id     wave   age black   pov mother spouse inschool hours
+   &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+ 1 22        1    16     0     1      0      0        1    21
+ 2 22        2    16     0     0      0      0        1    15
+ 3 22        3    16     0     0      0      0        1     3
+ 4 22        4    16     0     0      0      0        1     0
+ 5 22        5    16     0     0      0      0        1     0
+ 6 75        1    17     0     0      0      0        1     8
+ 7 75        2    17     0     0      0      0        1     0
+ 8 75        3    17     0     0      0      0        1     0
+ 9 75        4    17     0     0      0      0        1     4
+10 75        5    17     0     1      0      0        1     0
+# ℹ 5,745 more rows</code></pre>
 <p>Now we have a <code>panel_data</code> object! It is a special version
 of a <code>tibble</code>, which is itself a special kind of
 <code>data.frame</code>. <code>panel_data</code> objects work very hard
@@ -1774,51 +1774,51 @@ membership (<code>union</code>), marital status (<code>ms</code>), blue
 (<code>blk</code>), and female sex (<code>fem</code>).</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + ms + occ | blk + fem, data = wages)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: within-between
-## 
-## MODEL FIT:
-## AIC = 2036.78, BIC = 2119.13
-## Pseudo-R² (fixed effects) = 0.27
-## Pseudo-R² (total) = 0.69
-## Entity ICC = 0.57
-## 
-## WITHIN EFFECTS:
-## ----------------------------------------------------
-##                Est.   S.E.   t val.      d.f.      p
-## ----------- ------- ------ -------- --------- ------
-## wks            0.00   0.00     1.06   3566.00   0.29
-## union          0.06   0.03     2.53   3566.00   0.01
-## ms            -0.08   0.03    -2.57   3566.00   0.01
-## occ           -0.08   0.02    -3.32   3566.00   0.00
-## ----------------------------------------------------
-## 
-## BETWEEN EFFECTS:
-## ----------------------------------------------------------
-##                       Est.   S.E.   t val.     d.f.      p
-## ------------------ ------- ------ -------- -------- ------
-## (Intercept)           6.30   0.20    30.85   588.00   0.00
-## imean(wks)            0.01   0.00     2.25   588.00   0.02
-## imean(union)          0.15   0.03     4.67   588.00   0.00
-## imean(ms)             0.17   0.05     3.07   588.00   0.00
-## imean(occ)           -0.41   0.03   -13.31   588.00   0.00
-## blk                  -0.15   0.05    -2.81   588.00   0.01
-## fem                  -0.32   0.06    -4.96   588.00   0.00
-## ----------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.2992   
-##  Residual                  0.2589   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: within-between
+
+MODEL FIT:
+AIC = 2036.78, BIC = 2119.13
+Pseudo-R² (fixed effects) = 0.27
+Pseudo-R² (total) = 0.69
+Entity ICC = 0.57
+
+WITHIN EFFECTS:
+----------------------------------------------------
+               Est.   S.E.   t val.      d.f.      p
+----------- ------- ------ -------- --------- ------
+wks            0.00   0.00     1.06   3566.00   0.29
+union          0.06   0.03     2.53   3566.00   0.01
+ms            -0.08   0.03    -2.57   3566.00   0.01
+occ           -0.08   0.02    -3.32   3566.00   0.00
+----------------------------------------------------
+
+BETWEEN EFFECTS:
+----------------------------------------------------------
+                      Est.   S.E.   t val.     d.f.      p
+------------------ ------- ------ -------- -------- ------
+(Intercept)           6.30   0.20    30.85   588.00   0.00
+imean(wks)            0.01   0.00     2.25   588.00   0.02
+imean(union)          0.15   0.03     4.67   588.00   0.00
+imean(ms)             0.17   0.05     3.07   588.00   0.00
+imean(occ)           -0.41   0.03   -13.31   588.00   0.00
+blk                  -0.15   0.05    -2.81   588.00   0.01
+fem                  -0.32   0.06    -4.96   588.00   0.00
+----------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.2992   
+ Residual                  0.2589   
+------------------------------------</code></pre>
 <p>As you can see, the output distinguishes within- and between-entity
 effects. When you see <code>imean()</code> around a variable, that is
 the between-entity effect represented as the individual mean.</p>
@@ -1832,51 +1832,51 @@ effect occurs the time period after a person becomes married. We can ask
 for the lagged effect using <code>lag()</code>.</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + lag(ms) + occ | blk + fem, data = wages)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 2-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: within-between
-## 
-## MODEL FIT:
-## AIC = 1247.06, BIC = 1327.41
-## Pseudo-R² (fixed effects) = 0.28
-## Pseudo-R² (total) = 0.74
-## Entity ICC = 0.64
-## 
-## WITHIN EFFECTS:
-## ------------------------------------------------------
-##                  Est.   S.E.   t val.      d.f.      p
-## ------------- ------- ------ -------- --------- ------
-## wks             -0.00   0.00    -1.43   2999.92   0.15
-## union            0.05   0.03     1.82   2991.78   0.07
-## lag(ms)         -0.04   0.03    -1.19   2971.04   0.23
-## occ             -0.06   0.02    -2.56   2992.05   0.01
-## ------------------------------------------------------
-## 
-## BETWEEN EFFECTS:
-## ------------------------------------------------------------
-##                         Est.   S.E.   t val.     d.f.      p
-## -------------------- ------- ------ -------- -------- ------
-## (Intercept)             6.36   0.21    30.51   588.00   0.00
-## imean(wks)              0.01   0.00     2.25   588.00   0.02
-## imean(union)            0.15   0.03     4.48   588.00   0.00
-## imean(lag(ms))          0.15   0.06     2.80   588.01   0.01
-## imean(occ)             -0.41   0.03   -13.16   588.02   0.00
-## blk                    -0.15   0.05    -2.92   587.99   0.00
-## fem                    -0.33   0.06    -5.17   588.01   0.00
-## ------------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.3068   
-##  Residual                  0.2325   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 2-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: within-between
+
+MODEL FIT:
+AIC = 1247.06, BIC = 1327.41
+Pseudo-R² (fixed effects) = 0.28
+Pseudo-R² (total) = 0.74
+Entity ICC = 0.64
+
+WITHIN EFFECTS:
+------------------------------------------------------
+                 Est.   S.E.   t val.      d.f.      p
+------------- ------- ------ -------- --------- ------
+wks             -0.00   0.00    -1.43   2999.92   0.15
+union            0.05   0.03     1.82   2991.78   0.07
+lag(ms)         -0.04   0.03    -1.19   2971.04   0.23
+occ             -0.06   0.02    -2.56   2992.05   0.01
+------------------------------------------------------
+
+BETWEEN EFFECTS:
+------------------------------------------------------------
+                        Est.   S.E.   t val.     d.f.      p
+-------------------- ------- ------ -------- -------- ------
+(Intercept)             6.36   0.21    30.51   588.00   0.00
+imean(wks)              0.01   0.00     2.25   588.00   0.02
+imean(union)            0.15   0.03     4.48   588.00   0.00
+imean(lag(ms))          0.15   0.06     2.80   588.01   0.01
+imean(occ)             -0.41   0.03   -13.16   588.02   0.00
+blk                    -0.15   0.05    -2.92   587.99   0.00
+fem                    -0.33   0.06    -5.17   588.01   0.00
+------------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.3068   
+ Residual                  0.2325   
+------------------------------------</code></pre>
 <p>Well that doesn’t change the direction of the estimate, but it also
 moved it sufficiently close to 0 that we can’t say much about it one way
 or another.</p>
@@ -1894,52 +1894,52 @@ variable in the formula or set <code>use.wave</code> to
 <code>TRUE</code>.</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + ms + occ | blk + fem, data = wages, use.wave = TRUE)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: within-between
-## 
-## MODEL FIT:
-## AIC = -1688.87, BIC = -1600.19
-## Pseudo-R² (fixed effects) = 0.44
-## Pseudo-R² (total) = 0.89
-## Entity ICC = 0.8
-## 
-## WITHIN EFFECTS:
-## ----------------------------------------------------
-##                Est.   S.E.   t val.      d.f.      p
-## ----------- ------- ------ -------- --------- ------
-## wks            0.00   0.00     1.91   3565.00   0.06
-## union          0.03   0.02     2.29   3565.00   0.02
-## ms            -0.03   0.02    -1.71   3565.00   0.09
-## occ           -0.03   0.01    -1.81   3565.00   0.07
-## ----------------------------------------------------
-## 
-## BETWEEN EFFECTS:
-## -----------------------------------------------------------
-##                       Est.   S.E.   t val.      d.f.      p
-## ------------------ ------- ------ -------- --------- ------
-## (Intercept)           5.91   0.20    28.95    588.63   0.00
-## imean(wks)            0.01   0.00     2.25    587.99   0.02
-## imean(union)          0.15   0.03     4.67    588.00   0.00
-## imean(ms)             0.17   0.05     3.07    588.00   0.00
-## imean(occ)           -0.41   0.03   -13.31    588.00   0.00
-## blk                  -0.15   0.05    -2.81    588.00   0.01
-## fem                  -0.32   0.06    -4.96    588.00   0.00
-## t                     0.10   0.00    81.29   3565.00   0.00
-## -----------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.3094   
-##  Residual                  0.1533   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: within-between
+
+MODEL FIT:
+AIC = -1688.87, BIC = -1600.19
+Pseudo-R² (fixed effects) = 0.44
+Pseudo-R² (total) = 0.89
+Entity ICC = 0.8
+
+WITHIN EFFECTS:
+----------------------------------------------------
+               Est.   S.E.   t val.      d.f.      p
+----------- ------- ------ -------- --------- ------
+wks            0.00   0.00     1.91   3565.00   0.06
+union          0.03   0.02     2.29   3565.00   0.02
+ms            -0.03   0.02    -1.71   3565.00   0.09
+occ           -0.03   0.01    -1.81   3565.00   0.07
+----------------------------------------------------
+
+BETWEEN EFFECTS:
+-----------------------------------------------------------
+                      Est.   S.E.   t val.      d.f.      p
+------------------ ------- ------ -------- --------- ------
+(Intercept)           5.91   0.20    28.95    588.63   0.00
+imean(wks)            0.01   0.00     2.25    587.99   0.02
+imean(union)          0.15   0.03     4.67    588.00   0.00
+imean(ms)             0.17   0.05     3.07    588.00   0.00
+imean(occ)           -0.41   0.03   -13.31    588.00   0.00
+blk                  -0.15   0.05    -2.81    588.00   0.01
+fem                  -0.32   0.06    -4.96    588.00   0.00
+t                     0.10   0.00    81.29   3565.00   0.00
+-----------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.3094   
+ Residual                  0.1533   
+------------------------------------</code></pre>
 <p>Including <code>t</code> wipes out some of those previously observed
 effects. Believe it or not, we just fit a growth curve model!</p>
 <p>Now, we might think people have different trajectories. We can
@@ -1947,53 +1947,53 @@ include that as a random slope, which will go in the third part of the
 formula.</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + ms + occ | blk + fem | (t | id), use.wave = TRUE, data = wages)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: within-between
-## 
-## MODEL FIT:
-## AIC = -2064.42, BIC = -1963.07
-## Pseudo-R² (fixed effects) = 0.43
-## Pseudo-R² (total) = 0.92
-## Entity ICC = 0.84
-## 
-## WITHIN EFFECTS:
-## ----------------------------------------------------
-##                Est.   S.E.   t val.      d.f.      p
-## ----------- ------- ------ -------- --------- ------
-## wks            0.00   0.00     1.47   3498.40   0.14
-## union          0.02   0.01     1.61   3561.26   0.11
-## ms            -0.04   0.02    -1.97   3416.40   0.05
-## occ           -0.02   0.01    -1.42   3563.73   0.16
-## ----------------------------------------------------
-## 
-## BETWEEN EFFECTS:
-## ----------------------------------------------------------
-##                       Est.   S.E.   t val.     d.f.      p
-## ------------------ ------- ------ -------- -------- ------
-## (Intercept)           5.93   0.20    29.69   588.53   0.00
-## imean(wks)            0.01   0.00     2.12   587.98   0.03
-## imean(union)          0.16   0.03     4.90   587.97   0.00
-## imean(ms)             0.17   0.05     3.25   588.06   0.00
-## imean(occ)           -0.39   0.03   -13.16   588.01   0.00
-## blk                  -0.13   0.05    -2.49   588.00   0.01
-## fem                  -0.31   0.06    -4.90   588.07   0.00
-## t                     0.10   0.00    54.67   594.66   0.00
-## ----------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.3057   
-##     id           t         0.03499  
-##  Residual                  0.1334   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: within-between
+
+MODEL FIT:
+AIC = -2064.42, BIC = -1963.07
+Pseudo-R² (fixed effects) = 0.43
+Pseudo-R² (total) = 0.92
+Entity ICC = 0.84
+
+WITHIN EFFECTS:
+----------------------------------------------------
+               Est.   S.E.   t val.      d.f.      p
+----------- ------- ------ -------- --------- ------
+wks            0.00   0.00     1.47   3498.40   0.14
+union          0.02   0.01     1.61   3561.26   0.11
+ms            -0.04   0.02    -1.97   3416.40   0.05
+occ           -0.02   0.01    -1.42   3563.73   0.16
+----------------------------------------------------
+
+BETWEEN EFFECTS:
+----------------------------------------------------------
+                      Est.   S.E.   t val.     d.f.      p
+------------------ ------- ------ -------- -------- ------
+(Intercept)           5.93   0.20    29.69   588.53   0.00
+imean(wks)            0.01   0.00     2.12   587.98   0.03
+imean(union)          0.16   0.03     4.90   587.97   0.00
+imean(ms)             0.17   0.05     3.25   588.06   0.00
+imean(occ)           -0.39   0.03   -13.16   588.01   0.00
+blk                  -0.13   0.05    -2.49   588.00   0.01
+fem                  -0.31   0.06    -4.90   588.07   0.00
+t                     0.10   0.00    54.67   594.66   0.00
+----------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.3057   
+    id           t         0.03499  
+ Residual                  0.1334   
+------------------------------------</code></pre>
 <p>And now we have a latent growth curve model. The general effect on
 the other coefficients is more uncertainty and attenuated estimates.
 It’s worth keeping in mind that it is sometimes wrong to use a growth
@@ -2011,89 +2011,89 @@ means are not subtracted from the time varying variables, that’s an
 option too.</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + ms + occ | blk + fem, data = wages, model = &quot;contextual&quot;)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: contextual
-## 
-## MODEL FIT:
-## AIC = 2036.78, BIC = 2119.13
-## Pseudo-R² (fixed effects) = 0.27
-## Pseudo-R² (total) = 0.69
-## Entity ICC = 0.57
-## 
-## WITHIN EFFECTS:
-## ----------------------------------------------------
-##                Est.   S.E.   t val.      d.f.      p
-## ----------- ------- ------ -------- --------- ------
-## wks            0.00   0.00     1.06   3566.00   0.29
-## union          0.06   0.03     2.53   3566.00   0.01
-## ms            -0.08   0.03    -2.57   3566.00   0.01
-## occ           -0.08   0.02    -3.32   3566.00   0.00
-## ----------------------------------------------------
-## 
-## CONTEXTUAL EFFECTS:
-## -----------------------------------------------------------
-##                       Est.   S.E.   t val.      d.f.      p
-## ------------------ ------- ------ -------- --------- ------
-## (Intercept)           6.30   0.20    30.85    588.00   0.00
-## imean(wks)            0.01   0.00     1.93    660.18   0.05
-## imean(union)          0.09   0.04     2.15   1411.72   0.03
-## imean(ms)             0.25   0.06     3.95   1047.31   0.00
-## imean(occ)           -0.33   0.04    -8.55   1401.80   0.00
-## blk                  -0.15   0.05    -2.81    588.00   0.01
-## fem                  -0.32   0.06    -4.96    588.00   0.00
-## -----------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.2992   
-##  Residual                  0.2589   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: contextual
+
+MODEL FIT:
+AIC = 2036.78, BIC = 2119.13
+Pseudo-R² (fixed effects) = 0.27
+Pseudo-R² (total) = 0.69
+Entity ICC = 0.57
+
+WITHIN EFFECTS:
+----------------------------------------------------
+               Est.   S.E.   t val.      d.f.      p
+----------- ------- ------ -------- --------- ------
+wks            0.00   0.00     1.06   3566.00   0.29
+union          0.06   0.03     2.53   3566.00   0.01
+ms            -0.08   0.03    -2.57   3566.00   0.01
+occ           -0.08   0.02    -3.32   3566.00   0.00
+----------------------------------------------------
+
+CONTEXTUAL EFFECTS:
+-----------------------------------------------------------
+                      Est.   S.E.   t val.      d.f.      p
+------------------ ------- ------ -------- --------- ------
+(Intercept)           6.30   0.20    30.85    588.00   0.00
+imean(wks)            0.01   0.00     1.93    660.18   0.05
+imean(union)          0.09   0.04     2.15   1411.72   0.03
+imean(ms)             0.25   0.06     3.95   1047.31   0.00
+imean(occ)           -0.33   0.04    -8.55   1401.80   0.00
+blk                  -0.15   0.05    -2.81    588.00   0.01
+fem                  -0.32   0.06    -4.96    588.00   0.00
+-----------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.2992   
+ Residual                  0.2589   
+------------------------------------</code></pre>
 <p>Now the individual means have a new interpretation as the difference
 in effect compared to the within-entity estimates.</p>
 <p>If you don’t want to use any of the time-invariant variables, you can
 also just ask for the “within” estimator:</p>
 <pre class="r"><code>model &lt;- wbm(lwage ~ wks + union + ms + occ, data = wages, model = &quot;within&quot;)
 summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear mixed effects
-## Specification: within
-## 
-## MODEL FIT:
-## AIC = 2266.01, BIC = 2310.35
-## Pseudo-R² (fixed effects) = 0
-## Pseudo-R² (total) = 0.69
-## Entity ICC = 0.69
-## 
-## ----------------------------------------------------------
-##                      Est.   S.E.   t val.      d.f.      p
-## ----------------- ------- ------ -------- --------- ------
-## (Intercept)          6.68   0.02   413.08    594.00   0.00
-## wks                  0.00   0.00     1.06   3566.00   0.29
-## union                0.06   0.03     2.53   3566.00   0.01
-## ms                  -0.08   0.03    -2.57   3566.00   0.01
-## occ                 -0.08   0.02    -3.32   3566.00   0.00
-## ----------------------------------------------------------
-## 
-## p values calculated using Satterthwaite d.f.
-##  
-## RANDOM EFFECTS:
-## ------------------------------------
-##   Group      Parameter    Std. Dev. 
-## ---------- ------------- -----------
-##     id      (Intercept)    0.3819   
-##  Residual                  0.2589   
-## ------------------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear mixed effects
+Specification: within
+
+MODEL FIT:
+AIC = 2266.01, BIC = 2310.35
+Pseudo-R² (fixed effects) = 0
+Pseudo-R² (total) = 0.69
+Entity ICC = 0.69
+
+----------------------------------------------------------
+                     Est.   S.E.   t val.      d.f.      p
+----------------- ------- ------ -------- --------- ------
+(Intercept)          6.68   0.02   413.08    594.00   0.00
+wks                  0.00   0.00     1.06   3566.00   0.29
+union                0.06   0.03     2.53   3566.00   0.01
+ms                  -0.08   0.03    -2.57   3566.00   0.01
+occ                 -0.08   0.02    -3.32   3566.00   0.00
+----------------------------------------------------------
+
+p values calculated using Satterthwaite d.f.
+ 
+RANDOM EFFECTS:
+------------------------------------
+  Group      Parameter    Std. Dev. 
+---------- ------------- -----------
+    id      (Intercept)    0.3819   
+ Residual                  0.2589   
+------------------------------------</code></pre>
 <p>This can help declutter your output when you really just don’t care
 about the between-subjects effects.</p>
 </div>
@@ -2111,46 +2111,41 @@ doesn’t require you to be right about the distribution of effects and
 several other assumptions.</p>
 <p><code>wbgee()</code> builds on <code>geeglm()</code> from the
 <code>geepack</code> package and works just like <code>wbm()</code>.</p>
-<pre class="r"><code>model &lt;- wbgee(lwage ~ wks + union + ms + occ | blk + fem, data = wages)</code></pre>
-<pre><code>## Loading required namespace: geepack</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;broom&#39;:
-##   method            from  
-##   tidy.glht         jtools
-##   tidy.summary.glht jtools</code></pre>
-<pre class="r"><code>summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 1-7
-## Dependent variable: lwage
-## Model type: Linear GEE
-## Variance: ar1 (alpha = 0.79)
-## Specification: within-between
-## 
-## MODEL FIT:
-## QIC = 672.19, QICu = 669.6, CIC = 12.29
-## 
-## WITHIN EFFECTS:
-## ------------------------------------------
-##                Est.   S.E.   z val.      p
-## ----------- ------- ------ -------- ------
-## wks            0.00   0.00     0.07   0.94
-## union          0.03   0.02     1.32   0.19
-## ms            -0.08   0.03    -2.78   0.01
-## occ           -0.03   0.02    -1.64   0.10
-## ------------------------------------------
-## 
-## BETWEEN EFFECTS:
-## -------------------------------------------------
-##                       Est.   S.E.   z val.      p
-## ------------------ ------- ------ -------- ------
-## (Intercept)           6.29   0.22    28.48   0.00
-## imean(wks)            0.01   0.00     2.09   0.04
-## imean(union)          0.16   0.03     4.74   0.00
-## imean(ms)             0.17   0.06     3.01   0.00
-## imean(occ)           -0.41   0.03   -12.95   0.00
-## blk                  -0.14   0.05    -2.90   0.00
-## fem                  -0.30   0.06    -4.89   0.00
-## -------------------------------------------------</code></pre>
+<pre class="r"><code>model &lt;- wbgee(lwage ~ wks + union + ms + occ | blk + fem, data = wages)
+summary(model)</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 1-7
+Dependent variable: lwage
+Model type: Linear GEE
+Variance: ar1 (alpha = 0.79)
+Specification: within-between
+
+MODEL FIT:
+QIC = 672.19, QICu = 669.6, CIC = 12.29
+
+WITHIN EFFECTS:
+------------------------------------------
+               Est.   S.E.   z val.      p
+----------- ------- ------ -------- ------
+wks            0.00   0.00     0.07   0.94
+union          0.03   0.02     1.32   0.19
+ms            -0.08   0.03    -2.78   0.01
+occ           -0.03   0.02    -1.64   0.10
+------------------------------------------
+
+BETWEEN EFFECTS:
+-------------------------------------------------
+                      Est.   S.E.   z val.      p
+------------------ ------- ------ -------- ------
+(Intercept)           6.29   0.22    28.48   0.00
+imean(wks)            0.01   0.00     2.09   0.04
+imean(union)          0.16   0.03     4.74   0.00
+imean(ms)             0.17   0.06     3.01   0.00
+imean(occ)           -0.41   0.03   -12.95   0.00
+blk                  -0.14   0.05    -2.90   0.00
+fem                  -0.30   0.06    -4.89   0.00
+-------------------------------------------------</code></pre>
 <p>This gives us more conservative estimates, in general. Note that by
 default, <code>wbgee()</code> uses an AR-1 working error correlation
 structure in estimation. This makes sense in general but at times it may
@@ -2203,40 +2198,39 @@ contrasts of the <span class="math inline">\(\beta^+\)</span> and <span class="m
 assess the presence of asymmetric effects.</p>
 <p>Here’s how it works with the <code>panelr</code> function,
 <code>asym()</code>.</p>
-<pre class="r"><code>model &lt;- asym(lwage ~ ms + occ + union + wks, data = wages)</code></pre>
-<pre><code>## Loading required namespace: car</code></pre>
-<pre class="r"><code>summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 595
-## Time periods: 2-7
-## Dependent variable: lwage
-## Model type: Linear asymmetric effects (first differences)
-## Variance structure: toeplitz-1 (theta = -0.44) 
-## 
-## Standard errors: Cluster-robust (CR2) 
-## ------------------------------------------------
-##                      Est.   S.E.   t val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)          0.10   0.00    41.12   0.00
-## +ms                 -0.04   0.02    -1.95   0.05
-## -ms                  0.04   0.04     1.23   0.22
-## +occ                -0.02   0.02    -0.97   0.33
-## -occ                 0.03   0.02     1.17   0.24
-## +union               0.01   0.02     0.64   0.52
-## -union              -0.03   0.03    -1.11   0.27
-## +wks                 0.00   0.00     0.48   0.63
-## -wks                -0.00   0.00    -0.35   0.72
-## ------------------------------------------------
-## 
-## Tests of asymmetric effects:
-## --------------------------
-##               chi^2      p
-## ----------- ------- ------
-## ms             0.01   0.92
-## occ            0.19   0.66
-## union          0.44   0.51
-## wks            0.00   1.00
-## --------------------------</code></pre>
+<pre class="r"><code>model &lt;- asym(lwage ~ ms + occ + union + wks, data = wages)
+summary(model)</code></pre>
+<pre><code>MODEL INFO:
+Entities: 595
+Time periods: 2-7
+Dependent variable: lwage
+Model type: Linear asymmetric effects (first differences)
+Variance structure: toeplitz-1 (theta = -0.44) 
+
+Standard errors: Cluster-robust (CR2) 
+------------------------------------------------
+                     Est.   S.E.   t val.      p
+----------------- ------- ------ -------- ------
+(Intercept)          0.10   0.00    41.12   0.00
++ms                 -0.04   0.02    -1.95   0.05
+-ms                  0.04   0.04     1.23   0.22
++occ                -0.02   0.02    -0.97   0.33
+-occ                 0.03   0.02     1.17   0.24
++union               0.01   0.02     0.64   0.52
+-union              -0.03   0.03    -1.11   0.27
++wks                 0.00   0.00     0.48   0.63
+-wks                -0.00   0.00    -0.35   0.72
+------------------------------------------------
+
+Tests of asymmetric effects:
+--------------------------
+              chi^2      p
+----------- ------- ------
+ms             0.01   0.92
+occ            0.19   0.66
+union          0.44   0.51
+wks            0.00   1.00
+--------------------------</code></pre>
 <p>As you can see, in a model comparable to our within-between model
 from earlier, the effects seem quite symmetric.</p>
 <p>Let’s look at the <code>teen</code> data from earlier, where
@@ -2245,31 +2239,31 @@ spouse, <code>inschool</code> indicates whether the respondent is
 enrolled in school, and <code>hours</code> is the hours worked in the
 week of the survey.</p>
 <pre class="r"><code>summary(asym(hours ~ spouse + inschool, data = teen))</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 1151
-## Time periods: 2-5
-## Dependent variable: hours
-## Model type: Linear asymmetric effects (first differences)
-## Variance structure: toeplitz-1 (theta = -0.54) 
-## 
-## Standard errors: Cluster-robust (CR2) 
-## ------------------------------------------------
-##                      Est.   S.E.   t val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)          1.16   0.15     7.74   0.00
-## +spouse             -4.71   1.15    -4.09   0.00
-## -spouse             -0.61   2.20    -0.28   0.78
-## +inschool           -5.65   1.29    -4.38   0.00
-## -inschool            7.66   0.69    11.09   0.00
-## ------------------------------------------------
-## 
-## Tests of asymmetric effects:
-## -----------------------------
-##                  chi^2      p
-## -------------- ------- ------
-## spouse            6.21   0.01
-## inschool          2.14   0.14
-## -----------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 1151
+Time periods: 2-5
+Dependent variable: hours
+Model type: Linear asymmetric effects (first differences)
+Variance structure: toeplitz-1 (theta = -0.54) 
+
+Standard errors: Cluster-robust (CR2) 
+------------------------------------------------
+                     Est.   S.E.   t val.      p
+----------------- ------- ------ -------- ------
+(Intercept)          1.16   0.15     7.74   0.00
++spouse             -4.71   1.15    -4.09   0.00
+-spouse             -0.61   2.20    -0.28   0.78
++inschool           -5.65   1.29    -4.38   0.00
+-inschool            7.66   0.69    11.09   0.00
+------------------------------------------------
+
+Tests of asymmetric effects:
+-----------------------------
+                 chi^2      p
+-------------- ------- ------
+spouse            6.21   0.01
+inschool          2.14   0.14
+-----------------------------</code></pre>
 <p>Here we see an asymmetric effect of marriage: gaining a spouse
 corresponds with fewer hours worked, but there’s no effect on work hours
 when a spouse is lost. You can see in the lower table that this
@@ -2308,45 +2302,45 @@ and there’s a new predictor, <code>mother</code>, an indicator for
 whether the respondent has ever had any children.</p>
 <pre class="r"><code>model &lt;- asym_gee(pov ~ mother + spouse + inschool + hours, data = teen, family = binomial(link = &quot;logit&quot;), 
                   use.wave = TRUE, wave.factor = TRUE)</code></pre>
-<pre><code>## mother does not decrease over time so -mother is not included in the model.
-## Unordered factor wave variable was converted to ordered. You should check
-## that the order is correct.</code></pre>
+<pre><code>mother does not decrease over time so -mother is not included in the model.
+Unordered factor wave variable was converted to ordered. You should check
+that the order is correct.</code></pre>
 <pre class="r"><code>summary(model)</code></pre>
-<pre><code>## MODEL INFO:
-## Entities: 1151
-## Time periods: 2-5
-## Dependent variable: pov
-## Model family: binomial, Link: logit
-## Variance: ar1 (alpha = 0.33)
-## Specification: Asymmetric effects (via GEE)
-## 
-## MODEL FIT:
-## QIC = 5898.64, QICu = 5897.59, CIC = 11.52
-## 
-## ------------------------------------------------
-##                      Est.   S.E.   z val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)         -0.30   0.06    -5.19   0.00
-## +mother              0.72   0.11     6.63   0.00
-## +spouse             -0.70   0.14    -5.14   0.00
-## -spouse              0.43   0.25     1.71   0.09
-## +inschool           -0.02   0.16    -0.15   0.88
-## -inschool           -0.01   0.09    -0.09   0.93
-## +hours              -0.02   0.00    -8.17   0.00
-## -hours               0.01   0.00     1.61   0.11
-## wave.L               0.11   0.07     1.65   0.10
-## wave.Q              -0.00   0.05    -0.02   0.98
-## wave.C              -0.05   0.05    -0.97   0.33
-## ------------------------------------------------
-## 
-## Tests of asymmetric effects:
-## -----------------------------
-##                  chi^2      p
-## -------------- ------- ------
-## spouse            1.10   0.29
-## inschool          0.04   0.85
-## hours            25.57   0.00
-## -----------------------------</code></pre>
+<pre><code>MODEL INFO:
+Entities: 1151
+Time periods: 2-5
+Dependent variable: pov
+Model family: binomial, Link: logit
+Variance: ar1 (alpha = 0.33)
+Specification: Asymmetric effects (via GEE)
+
+MODEL FIT:
+QIC = 5898.64, QICu = 5897.59, CIC = 11.52
+
+------------------------------------------------
+                     Est.   S.E.   z val.      p
+----------------- ------- ------ -------- ------
+(Intercept)         -0.30   0.06    -5.19   0.00
++mother              0.72   0.11     6.63   0.00
++spouse             -0.70   0.14    -5.14   0.00
+-spouse              0.43   0.25     1.71   0.09
++inschool           -0.02   0.16    -0.15   0.88
+-inschool           -0.01   0.09    -0.09   0.93
++hours              -0.02   0.00    -8.17   0.00
+-hours               0.01   0.00     1.61   0.11
+wave.L               0.11   0.07     1.65   0.10
+wave.Q              -0.00   0.05    -0.02   0.98
+wave.C              -0.05   0.05    -0.97   0.33
+------------------------------------------------
+
+Tests of asymmetric effects:
+-----------------------------
+                 chi^2      p
+-------------- ------- ------
+spouse            1.10   0.29
+inschool          0.04   0.85
+hours            25.57   0.00
+-----------------------------</code></pre>
 <p>The results are broadly similar in terms of coefficient estimates to
 those obtained by Allison. Unlike Allison, we do not have good evidence
 of an asymmetric effect in the case of <code>spouse</code> but we do

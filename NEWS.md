@@ -1,3 +1,8 @@
+# panelr 0.7.8
+
+* Includes a back-end update for continued compatibility with `tibble`. (#55)
+* Fixes a testing issue that caused the package's removal from CRAN.
+
 # panelr 0.7.7
 
 * Includes back-end changes for compatibility with recent updates to `skimr`,  `dplyr`, and `purrr`. Users should not notice any change in behavior from these.
