@@ -26,6 +26,15 @@ teen
 data("WageData")
 wages <- panel_data(WageData, id = id, wave = t)
 
+## ----eval = do_eval-----------------------------------------------------------
+library(panelr)
+library(splines)
+data("WageData")
+wages <- panel_data(WageData, id = id, wave = t)
+
+mod_spline <- wbm(lwage ~ ns(exp, df = 3) | blk, data = wages)
+mod_spline
+
 ## -----------------------------------------------------------------------------
 model <- wbm(lwage ~ wks + union + ms + occ | blk + fem, data = wages)
 summary(model)

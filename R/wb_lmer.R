@@ -210,6 +210,22 @@
 #' @import jtools
 #' @rdname wbm
 #' @seealso [wbm_stan()] for a Bayesian estimation option.
+#' @details
+#' Matrix-returning transformations in the time-varying part of the formula
+#' are supported for common basis expansion functions such as
+#' `splines::ns()`, `splines::bs()`, and `stats::poly()`.
+#'
+#' For a term like `ns(x, df = 3)` in the varying part, `wbm()` expands it into
+#' multiple columns representing:
+#' 
+#' * a within-person component: spline bases are computed on deviations
+#'   `x_it - xbar_i` and then each resulting basis column is de-meaned within
+#'   person (double-demean for nonlinear terms)
+#' * a between-person component: spline bases are computed on the person means
+#'   `xbar_i`
+#'
+#' This avoids the per-group knot selection that would otherwise occur when
+#' splines are evaluated inside grouped `mutate()`.
 #' @importFrom stats as.formula gaussian terms confint drop.terms reformulate
 #' @importFrom stats model.matrix
 
@@ -356,12 +372,15 @@ wbm <- function(formula, data, id = NULL, wave = NULL,
   } 
   out@frame <- as.data.frame(data)
   attr(out@frame, "terms") <- terms 
-  attr(out@frame, "formula") <- formula(fit)  
+  attr(out@frame, "formula") <- formula(fit)
+  attr(out@frame, "wave") <- prepped$wave
+  attr(out@frame, "id") <- prepped$id
 
   out@call_info <- list(dv = dv, id = id, wave = wave,
               num_distinct = prepped$num_distinct,
               varying = c(pf$varying, e$within_ints), constants = pf$constants,
               meanvars = pf$meanvars, model = model,
+              interactions = c(e$within_ints, ints),
               max_wave = prepped$maxwave, min_wave = prepped$minwave,
               ints = ints, pvals = pvals, pR2 = pR2, env = the_env,
               mf_form = prepped$mf_form,
@@ -444,9 +463,9 @@ summary.wbm <- function(object, ...) {
                         model = est_name)
 
   coefs <- j$coeftable
-  rownames(coefs) <- gsub("`", "", rownames(coefs), fixed = TRUE)
+  rownames(coefs) <- un_bt(rownames(coefs))
   if (!is.null(x2$ints)) {
-    x2$ints <- gsub("`", "", x2$ints, fixed = TRUE)
+    x2$ints <- un_bt(x2$ints)
   }
 
   varying <- x2$varying
@@ -723,9 +742,8 @@ tidy.summ.wbm <- function(x, ...) {
 update_summ <- function(summ, call.env, ...) {
   
   call <- getCall(summ)
-  
   # Now get the argument names for that version of summ
-  summ_formals <- formals(getFromNamespace(class(summ), "jtools"))
+  summ_formals <- formals(getFromNamespace(class(summ)[1], "jtools"))
   
   extras <- as.list(match.call())
   indices <- which(names(extras) %in% names(summ_formals))

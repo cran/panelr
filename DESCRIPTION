@@ -1,8 +1,11 @@
 Package: panelr
 Title: Regression Models and Utilities for Repeated Measures and Panel
         Data
-Version: 0.7.8
+Version: 1.0.0
 Authors@R: person("Jacob A.", "Long", email = "jacob.long@sc.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1582-6214"))
+Author: Jacob A. Long [aut, cre] (ORCID:
+    <https://orcid.org/0000-0002-1582-6214>)
+Maintainer: Jacob A. Long <jacob.long@sc.edu>
 Description: Provides an object type and associated tools for storing and 
   wrangling panel data. Implements several methods for creating regression
   models that take advantage of the unique aspects of 
@@ -19,21 +22,21 @@ Description: Provides an object type and associated tools for storing and
   (Allison, 2019 <doi:10.1177/2378023119826441>) as well as a generalized
   linear model extension thereof using GEE. 
 URL: https://panelr.jacob-long.com
-BugReports: https://github.com/jacob-long/panelr
+BugReports: https://github.com/jacob-long/panelr/issues
 Depends: R (>= 3.4.0), lme4
-Imports: crayon, dplyr, Formula, ggplot2, jtools (>= 2.0.1), lmerTest,
+Imports: crayon, dplyr, Formula, ggplot2, jtools (>= 2.3.1), lmerTest,
         magrittr, methods, purrr, rlang (>= 0.3.0), stringr, tibble (>=
-        2.0.0), tidyr (>= 0.8.3)
-Suggests: brms, broom.mixed, car, clubSandwich, geepack, generics,
-        nlme, plm, sandwich, skimr, testthat, covr, knitr, rmarkdown
+        2.0.0), tidyr (>= 0.8.3), reformulas (>= 0.4.2), vctrs (>=
+        0.4.0)
+Suggests: AER, brms, broom.mixed, car, clubSandwich, geepack, generics,
+        nlme, plm, sandwich, skimr, splines, testthat, covr, knitr,
+        rmarkdown
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-08-21 16:59:59 UTC; jacoblong
-Author: Jacob A. Long [aut, cre] (<https://orcid.org/0000-0002-1582-6214>)
-Maintainer: Jacob A. Long <jacob.long@sc.edu>
+Packaged: 2026-01-20 18:52:37 UTC; jacoblong
 Repository: CRAN
-Date/Publication: 2023-08-22 15:50:08 UTC
+Date/Publication: 2026-01-21 08:00:06 UTC
