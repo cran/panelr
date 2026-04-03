@@ -1,7 +1,7 @@
-31b8a500b25c9e31237739e426a7301f *DESCRIPTION
+361c26b10f07ecd2b8ef79324d3b3a1b *DESCRIPTION
 9f8d5d83939805419bbfd30becabc7c3 *LICENSE
 e4b57c121afa02dd23b0a3997311fb21 *NAMESPACE
-904936bf31077582ef1e0ec2057ab010 *NEWS.md
+ece29257cd6a529952f4acc5880e338f *NEWS.md
 36999c6774e71c83194bba87c8d30628 *R/1_wbMod.R
 fd8c445e5dd2b9a85dfff8c1115dd351 *R/WageData.R
 1672f80aa2c86d42628d22a7521cfdfd *R/asym.R
@@ -36,10 +36,10 @@ e8e0b660c5126eea5d16e570e488b66c *data/nlsy.rda
 ac48e92bf83005b505359af0c1d55dc9 *inst/CITATION
 0c43341776cab7c6a78bda65607fa71c *inst/doc/reshape.R
 1fb128988d186dbe606644cbcb6a285b *inst/doc/reshape.Rmd
-f2f544b8779b002b951ada5838e059d3 *inst/doc/reshape.html
+2b188c206aa576bf7905b8a41fd36c54 *inst/doc/reshape.html
 5988169f4c90e8e5e765053c698bf57d *inst/doc/wbm.R
 e1cd8c5a8ee5d9a3b46a835e99ab9340 *inst/doc/wbm.Rmd
-5e7bfbd17a67e6ba1883e68e8e4c0445 *inst/doc/wbm.html
+826b151697531bc7262660d6286db76c *inst/doc/wbm.html
 b1cba7546e674849fd00a07eac3dee36 *man/InteractionConfig.Rd
 6fc55347a0d3cdd28a1b1ed8e0a4fb9d *man/WBFormula.Rd
 81c5ec5ab801d4389e842327e33533f7 *man/WBFormula_from_parser.Rd
@@ -111,7 +111,7 @@ afec8f479d889751680f35ba8e820835 *man/wbm_stan.Rd
 5011e55c3b0f89a8fced7ff39e74886b *man/widen_panel.Rd
 133f28b115f207f071e5ef2cc03d95d1 *tests/testthat.R
 18ff50fc10abdc396af6e0a16a3824d7 *tests/testthat/test-balance_panel.R
-eaf88b8fb79616fa8eaa06e3235b6c8a *tests/testthat/test-utils.R
+aeef390489b8823dc64679987d1599fc *tests/testthat/test-utils.R
 fb7750997bf69ab0db90a2f5bdd16f88 *tests/testthat/test-vctrs.R
 5f7c3de2dc58de5e1dc80fca4bd87f16 *tests/testthat/test_asym.R
 7e60af0308663117b23c25f314167a09 *tests/testthat/test_asym_gee.R
