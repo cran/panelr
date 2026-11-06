@@ -1,7 +1,7 @@
 Package: panelr
 Title: Regression Models and Utilities for Repeated Measures and Panel
         Data
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: person("Jacob A.", "Long", email = "jacob.long@sc.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-1582-6214"))
 Author: Jacob A. Long [aut, cre] (ORCID:
     <https://orcid.org/0000-0002-1582-6214>)
@@ -24,19 +24,19 @@ Description: Provides an object type and associated tools for storing and
 URL: https://panelr.jacob-long.com
 BugReports: https://github.com/jacob-long/panelr/issues
 Depends: R (>= 3.4.0), lme4
-Imports: crayon, dplyr, Formula, ggplot2, jtools (>= 2.3.1), lmerTest,
-        magrittr, methods, purrr, rlang (>= 0.3.0), stringr, tibble (>=
-        2.0.0), tidyr (>= 0.8.3), reformulas (>= 0.4.2), vctrs (>=
-        0.4.0)
+Imports: crayon, dplyr, Formula, ggplot2, jtools (>= 2.3.1), lmerTest
+        (>= 3.2-1), magrittr, methods, purrr, rlang (>= 0.3.0),
+        stringr, tibble (>= 2.0.0), tidyr (>= 0.8.3), reformulas (>=
+        0.4.2), vctrs (>= 0.4.0)
 Suggests: AER, brms, broom.mixed, car, clubSandwich, geepack, generics,
-        nlme, plm, sandwich, skimr, splines, testthat, covr, knitr,
-        rmarkdown
+        interactions, nlme, plm, sandwich, skimr, splines, testthat,
+        covr, knitr, rmarkdown
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2026-04-03 18:00:13 UTC; jacoblong
+Packaged: 2026-11-06 04:00:34 UTC; jacoblong
 Repository: CRAN
-Date/Publication: 2026-04-03 21:50:12 UTC
+Date/Publication: 2026-11-06 20:40:07 UTC

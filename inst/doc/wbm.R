@@ -59,6 +59,25 @@ summary(model)
 model <- wbm(lwage ~ wks + union + ms + occ, data = wages, model = "within")
 summary(model)
 
+## ----interaction-predictions, eval = requireNamespace("interactions", quietly = TRUE) && "plot.scale" %in% names(formals(interactions::interact_plot))----
+interaction_model <- wbm(lwage ~ wks | ed | wks * ed, data = wages,
+                         pR2 = FALSE, pvals = FALSE)
+interactions::interact_plot(interaction_model, pred = wks, modx = ed,
+                           modx.values = c(9, 12, 16), interval = TRUE)
+
+## ----within-interaction-predictions, eval = requireNamespace("interactions", quietly = TRUE) && "plot.scale" %in% names(formals(interactions::interact_plot))----
+within_interaction <- wbm(lwage ~ wks * exp, data = wages,
+                          pR2 = FALSE, pvals = FALSE)
+interactions::interact_plot(within_interaction, pred = wks, modx = exp,
+                           interval = TRUE)
+# Explicit values are deviations too: -2, 0, +2 years from the person's mean.
+interactions::interact_plot(within_interaction, pred = wks, modx = exp,
+                           modx.values = c(-2, 0, 2))
+
+## ----panel-simple-slopes, eval = requireNamespace("interactions", quietly = TRUE) && !is.null(getS3method("sim_slopes", "wbm", optional = TRUE, envir = asNamespace("interactions")))----
+interactions::sim_slopes(within_interaction, pred = wks, modx = exp,
+                         modx.values = c(-2, 0, 2), confint = TRUE, digits = 4)
+
 ## -----------------------------------------------------------------------------
 model <- wbgee(lwage ~ wks + union + ms + occ | blk + fem, data = wages)
 summary(model)
